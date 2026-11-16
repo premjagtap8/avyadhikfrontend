@@ -1,0 +1,399 @@
+/* AvyaDhik "For providers" page. Same navy + teal as Browse. */
+
+.lp {
+  --navy: #0b3a6e;
+  --navy-dark: #072a52;
+  --teal: #0f9b8e;
+  --teal-soft: #e3f4f2;
+  --ink: #1b2b3f;
+  --muted: #5d6b7c;
+  --line: #dbe3ec;
+  --bg: #f3f6fa;
+  --danger: #b3261e;
+
+  background: var(--bg);
+  color: var(--ink);
+}
+.lp *,
+.lp *::before,
+.lp *::after {
+  box-sizing: border-box;
+}
+
+.lp-container {
+  width: min(1100px, 100% - 40px);
+  margin-inline: auto;
+}
+.lp-narrow {
+  width: min(760px, 100% - 40px);
+  margin-inline: auto;
+}
+
+.lp-eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.lp-eyebrow--light {
+  color: #7fe0d6;
+}
+
+/* ---------- Split section ---------- */
+.lp-split {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  min-height: 680px;
+}
+
+.lp-aside {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 420px;
+  padding: 48px;
+  color: #fff;
+  overflow: hidden;
+}
+.lp-aside img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.lp-aside::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(7, 42, 82, 0.1) 0%, rgba(7, 42, 82, 0.9) 100%);
+}
+.lp-aside > div {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+}
+.lp-aside h1 {
+  margin: 0 0 16px;
+  font-size: clamp(2rem, 3.6vw, 3.2rem);
+  line-height: 1.1;
+}
+.lp-aside p {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.lp-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+.lp-card {
+  width: 100%;
+  max-width: 700px;
+  padding: 44px;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 8px 40px rgba(11, 58, 110, 0.1);
+}
+.lp-card h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  line-height: 1.15;
+  color: var(--navy);
+}
+.lp-lead {
+  margin: 0;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ---------- Form ---------- */
+.lp-progress {
+  height: 6px;
+  margin: 26px 0 12px;
+  background: #e3eaf2;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.lp-progress span {
+  display: block;
+  height: 100%;
+  background: var(--teal);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+.lp-step-label {
+  margin: 0 0 22px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.lp-step {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.lp-step legend {
+  padding: 0;
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+.lp-step legend:focus {
+  outline: none;
+}
+.lp-step > p {
+  margin: 0 0 24px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.lp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.lp-field--full {
+  grid-column: 1 / -1;
+}
+.lp-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.lp-field input,
+.lp-field select,
+.lp-field textarea {
+  width: 100%;
+  padding: 16px 18px;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+}
+.lp-field textarea {
+  resize: vertical;
+  min-height: 130px;
+}
+.lp-field input:focus,
+.lp-field select:focus,
+.lp-field textarea:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(15, 155, 142, 0.18);
+}
+.lp-field [aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.lp-error {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  color: var(--danger);
+}
+.lp-status {
+  margin: 20px 0 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #fdecea;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.lp-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 22px;
+  line-height: 1.55;
+  cursor: pointer;
+}
+.lp-check input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--teal);
+}
+
+.lp-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.lp-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+.lp-actions--start {
+  justify-content: flex-start;
+}
+
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 30px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.98rem;
+  text-decoration: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.lp-btn--solid {
+  background: var(--navy);
+  color: #fff;
+  border: 1.5px solid var(--navy);
+}
+.lp-btn--solid:hover:not(:disabled) {
+  background: var(--navy-dark);
+}
+.lp-btn--ghost {
+  background: #fff;
+  color: var(--navy);
+  border: 1.5px solid var(--navy);
+}
+.lp-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lp-done {
+  margin-top: 28px;
+  padding: 32px 24px;
+  text-align: center;
+  background: var(--teal-soft);
+  border-radius: 18px;
+}
+.lp-done h3 {
+  margin: 0 0 10px;
+  color: var(--navy);
+}
+.lp-done p {
+  margin: 0 0 22px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ---------- Process cards ---------- */
+.lp-section {
+  padding: 72px 0;
+}
+.lp-section--soft {
+  background: #e9f1f1;
+}
+
+.lp-care-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+.lp-care-card {
+  position: relative;
+  padding: 28px 26px 32px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(11, 58, 110, 0.07);
+}
+.lp-care-number {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--teal);
+}
+.lp-care-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  color: var(--navy);
+}
+.lp-care-card p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.lp-care-card svg {
+  position: absolute;
+  top: 26px;
+  right: 24px;
+  color: var(--navy);
+}
+
+/* ---------- FAQ ---------- */
+.lp-faq-title {
+  margin: 0 0 28px;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  color: var(--navy);
+}
+.lp-faq {
+  display: grid;
+  gap: 12px;
+}
+.lp-faq-item {
+  background: #fff;
+  border-radius: 16px;
+  padding: 0 22px;
+  box-shadow: 0 2px 14px rgba(11, 58, 110, 0.06);
+}
+.lp-faq-item summary {
+  padding: 20px 0;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+}
+.lp-faq-item p {
+  margin: 0;
+  padding-bottom: 20px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .lp-split {
+    grid-template-columns: 1fr;
+  }
+  .lp-aside {
+    min-height: 340px;
+    padding: 32px 24px;
+  }
+  .lp-care-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .lp-card {
+    padding: 28px 20px;
+    border-radius: 22px;
+  }
+  .lp-grid {
+    grid-template-columns: 1fr;
+  }
+  .lp-btn {
+    padding: 14px 22px;
+  }
+}

@@ -1,0 +1,165 @@
+/* Admin layout: navbar stays, only the child page changes. Colours from the AvyaDhik logo. */
+
+.al {
+  --al-navy: #0b3b72;
+  --al-navy-dark: #082c57;
+  --al-green: #0e9f8e;
+  --al-bg: #f4f7fb;
+
+  min-height: 100vh;
+  background: var(--al-bg);
+}
+
+/* ---------- Navbar ---------- */
+
+.al-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--al-navy-dark);
+  border-bottom: 4px solid var(--al-green);
+}
+
+.al-bar__inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  width: min(1180px, 100% - 40px);
+  min-height: 64px;
+  margin: 0 auto;
+}
+
+.al-brand {
+  flex-shrink: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+
+.al-brand span {
+  color: #5fd3c4;
+  font-weight: 400;
+}
+
+.al-nav {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  align-self: stretch;
+}
+
+.al-link {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.al-link:hover {
+  color: #fff;
+}
+
+.al-link.is-active {
+  color: #fff;
+  border-bottom-color: var(--al-green);
+}
+
+.al-link:focus-visible,
+.al-brand:focus-visible,
+.al-site:focus-visible,
+.al-logout:focus-visible {
+  outline: 3px solid var(--al-green);
+  outline-offset: 2px;
+}
+
+.al-side {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.al-site {
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+.al-site:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.al-user {
+  font-weight: 600;
+  color: #fff;
+}
+
+.al-logout {
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.al-logout:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #fff;
+}
+
+/* ---------- Page area ---------- */
+
+.al-content {
+  min-height: calc(100vh - 68px);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 760px) {
+  .al-bar__inner {
+    flex-wrap: wrap;
+    gap: 0 16px;
+    padding: 10px 0 0;
+  }
+
+  .al-side {
+    order: 2;
+    gap: 12px;
+  }
+
+  .al-site,
+  .al-user {
+    display: none;
+  }
+
+  .al-nav {
+    order: 3;
+    flex-basis: 100%;
+    min-height: 46px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .al-nav::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-link {
+    transition: none;
+  }
+}

@@ -1,0 +1,396 @@
+/* Admin dashboard. Colours are taken from the AvyaDhik logo (navy and green). */
+
+.ad {
+  --ad-navy: #0b3b72;
+  --ad-navy-dark: #082c57;
+  --ad-green: #0e9f8e;
+  --ad-green-dark: #0a7f72;
+  --ad-green-soft: #e4f5f2;
+  --ad-ink: #1b2a3b;
+  --ad-muted: #5a6b7e;
+  --ad-line: #d6dfe9;
+  --ad-bg: #f4f7fb;
+  --ad-danger: #b3261e;
+  --ad-danger-bg: #fdecea;
+  --ad-amber: #8a5a00;
+  --ad-amber-bg: #fff3d6;
+
+  padding: 36px 0 64px;
+  background: var(--ad-bg);
+  color: var(--ad-ink);
+}
+
+.ad-container {
+  width: min(1180px, 100% - 40px);
+  margin: 0 auto;
+}
+
+/* ---------- Header ---------- */
+
+.ad-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 26px;
+}
+
+.ad-head h1 {
+  margin: 0 0 6px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1.15;
+  color: var(--ad-navy);
+}
+
+.ad-head p {
+  margin: 0;
+  max-width: 560px;
+  color: var(--ad-muted);
+  line-height: 1.55;
+}
+
+.ad-head__side {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.ad-user {
+  font-weight: 600;
+  color: var(--ad-navy);
+}
+
+/* ---------- Tabs ---------- */
+
+.ad-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.ad-tab {
+  padding: 9px 18px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ad-navy);
+  background: #fff;
+  border: 1.5px solid var(--ad-line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.ad-tab:hover {
+  border-color: var(--ad-navy);
+}
+
+.ad-tab.is-active {
+  color: #fff;
+  background: var(--ad-navy);
+  border-color: var(--ad-navy);
+}
+
+.ad-tab:focus-visible,
+.ad-btn:focus-visible,
+.ad-link:focus-visible {
+  outline: 3px solid var(--ad-green);
+  outline-offset: 2px;
+}
+
+.ad-count {
+  margin-left: auto;
+  color: var(--ad-muted);
+  font-size: 0.95rem;
+}
+
+/* ---------- Buttons ---------- */
+
+.ad-btn {
+  padding: 9px 16px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.ad-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ad-btn--solid {
+  color: #fff;
+  background: var(--ad-navy);
+}
+
+.ad-btn--solid:hover:not(:disabled) {
+  background: var(--ad-navy-dark);
+}
+
+.ad-btn--ghost {
+  color: var(--ad-navy);
+  background: #fff;
+  border-color: var(--ad-line);
+}
+
+.ad-btn--ghost:hover:not(:disabled) {
+  border-color: var(--ad-navy);
+}
+
+.ad-btn--danger {
+  color: var(--ad-danger);
+  background: #fff;
+  border-color: #efc4c0;
+}
+
+.ad-btn--danger:hover:not(:disabled) {
+  background: var(--ad-danger-bg);
+}
+
+/* ---------- Messages and states ---------- */
+
+.ad-banner {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--ad-danger-bg);
+  color: var(--ad-danger);
+}
+
+.ad-state {
+  padding: 48px 24px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid var(--ad-line);
+  border-radius: 14px;
+}
+
+.ad-state h2 {
+  margin: 0 0 8px;
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--ad-navy);
+}
+
+.ad-state p {
+  margin: 0 auto 18px;
+  max-width: 460px;
+  color: var(--ad-muted);
+  line-height: 1.55;
+}
+
+.ad-state p:last-child {
+  margin-bottom: 0;
+}
+
+.ad-skeletons {
+  display: grid;
+  gap: 10px;
+}
+
+.ad-skeleton {
+  height: 62px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #e8eef5 25%, #f2f6fa 50%, #e8eef5 75%);
+  background-size: 200% 100%;
+  animation: ad-shimmer 1.4s infinite linear;
+}
+
+@keyframes ad-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Table ---------- */
+
+.ad-tablewrap {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid var(--ad-line);
+  border-radius: 14px;
+}
+
+.ad-table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+}
+
+.ad-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ad-navy);
+  background: #eef3f9;
+  border-bottom: 1px solid var(--ad-line);
+}
+
+.ad-table td {
+  padding: 14px 16px;
+  vertical-align: middle;
+  border-bottom: 1px solid #e8eef5;
+  line-height: 1.4;
+}
+
+.ad-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ad-table td strong,
+.ad-table td small {
+  display: block;
+}
+
+.ad-table td small {
+  margin-top: 2px;
+  color: var(--ad-muted);
+}
+
+.ad-table tr.is-open td {
+  background: #f8fbfe;
+}
+
+.ad-link {
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  color: var(--ad-navy);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid var(--ad-green);
+  cursor: pointer;
+}
+
+.ad-link:hover {
+  color: var(--ad-green-dark);
+}
+
+.ad-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------- Status badges ---------- */
+
+.ad-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.ad-badge--new {
+  color: var(--ad-navy);
+  background: #e3ecf8;
+}
+
+.ad-badge--contacted {
+  color: var(--ad-amber);
+  background: var(--ad-amber-bg);
+}
+
+.ad-badge--verified {
+  color: var(--ad-green-dark);
+  background: var(--ad-green-soft);
+}
+
+.ad-badge--rejected {
+  color: var(--ad-danger);
+  background: var(--ad-danger-bg);
+}
+
+/* ---------- Expanded details ---------- */
+
+.ad-details td {
+  padding: 0 16px 18px;
+  background: #f8fbfe;
+}
+
+.ad-details dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 24px;
+  margin: 0;
+  padding: 16px 18px;
+  background: #fff;
+  border: 1px solid var(--ad-line);
+  border-left: 4px solid var(--ad-green);
+  border-radius: 10px;
+}
+
+.ad-details dt {
+  margin-bottom: 3px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ad-muted);
+}
+
+.ad-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.ad-details a {
+  color: var(--ad-green-dark);
+  font-weight: 600;
+}
+
+.ad-details__wide {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Pagination ---------- */
+
+.ad-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 22px;
+  color: var(--ad-muted);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 720px) {
+  .ad {
+    padding: 24px 0 48px;
+  }
+
+  .ad-head {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ad-count {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .ad-details dl {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ad-skeleton {
+    animation: none;
+  }
+
+  .ad-tab,
+  .ad-btn {
+    transition: none;
+  }
+}

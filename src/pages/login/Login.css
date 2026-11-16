@@ -1,0 +1,334 @@
+/* Login page. Colours are taken from the AvyaDhik logo (navy and green). */
+
+.lg {
+  --lg-navy: #0b3b72;
+  --lg-navy-dark: #082c57;
+  --lg-green: #0e9f8e;
+  --lg-green-dark: #0a7f72;
+  --lg-green-soft: #e4f5f2;
+  --lg-ink: #1b2a3b;
+  --lg-muted: #5a6b7e;
+  --lg-line: #d6dfe9;
+  --lg-bg: #f4f7fb;
+  --lg-danger: #b3261e;
+  --lg-danger-bg: #fdecea;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: calc(100vh - 100px);
+  background: var(--lg-bg);
+  color: var(--lg-ink);
+}
+
+/* ---------- Left: pitch ---------- */
+
+.lg-pitch {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 56px 48px;
+  background: linear-gradient(160deg, var(--lg-navy) 0%, var(--lg-navy-dark) 100%);
+  color: #fff;
+  border-right: 6px solid var(--lg-green);
+}
+
+.lg-pitch__inner {
+  width: 100%;
+  max-width: 460px;
+}
+
+.lg-pitch h1 {
+  margin: 0 0 16px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 3.4vw, 2.9rem);
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.lg-pitch p {
+  margin: 0 0 28px;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.lg-pitch ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
+}
+
+.lg-pitch li {
+  position: relative;
+  padding-left: 30px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.lg-pitch li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--lg-green);
+}
+
+.lg-pitch li::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ---------- Right: form ---------- */
+
+.lg-panel {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 48px;
+}
+
+.lg-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 36px;
+  background: #fff;
+  border: 1px solid var(--lg-line);
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(11, 59, 114, 0.1);
+}
+
+.lg-card h2 {
+  margin: 0 0 6px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--lg-navy);
+}
+
+.lg-sub {
+  margin: 0 0 24px;
+  color: var(--lg-muted);
+  line-height: 1.5;
+}
+
+.lg-banner {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--lg-danger-bg);
+  color: var(--lg-danger);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.lg-field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.lg-field label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--lg-ink);
+}
+
+.lg-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 14px;
+  font: inherit;
+  color: var(--lg-ink);
+  background: #fff;
+  border: 1.5px solid var(--lg-line);
+  border-radius: 10px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.lg-field input::placeholder {
+  color: #93a1b2;
+}
+
+.lg-field input:hover {
+  border-color: #b4c3d4;
+}
+
+.lg-field input:focus {
+  outline: none;
+  border-color: var(--lg-green);
+  box-shadow: 0 0 0 4px var(--lg-green-soft);
+}
+
+.lg-field input[aria-invalid="true"] {
+  border-color: var(--lg-danger);
+}
+
+.lg-error {
+  color: var(--lg-danger);
+  font-size: 0.85rem;
+}
+
+/* Password field with show / hide */
+.lg-password {
+  position: relative;
+}
+
+.lg-password input {
+  padding-right: 72px;
+}
+
+.lg-toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--lg-navy);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.lg-toggle:hover {
+  background: var(--lg-green-soft);
+}
+
+.lg-toggle:focus-visible {
+  outline: 3px solid var(--lg-green);
+  outline-offset: 1px;
+}
+
+/* Submit */
+.lg-submit {
+  width: 100%;
+  margin-top: 6px;
+  padding: 14px 18px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--lg-navy);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+
+.lg-submit:hover:not(:disabled) {
+  background: var(--lg-navy-dark);
+}
+
+.lg-submit:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.lg-submit:focus-visible {
+  outline: 3px solid var(--lg-green);
+  outline-offset: 3px;
+}
+
+.lg-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Links under the form */
+.lg-foot {
+  margin: 20px 0 0;
+  text-align: center;
+  color: var(--lg-muted);
+}
+
+.lg-foot--small {
+  margin-top: 10px;
+  font-size: 0.92rem;
+}
+
+.lg-foot a {
+  color: var(--lg-green-dark);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lg-foot a:hover {
+  text-decoration: underline;
+}
+
+.lg-foot a:focus-visible {
+  outline: 3px solid var(--lg-green);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 900px) {
+  .lg {
+    grid-template-columns: 1fr;
+  }
+
+  .lg-pitch {
+    justify-content: flex-start;
+    padding: 40px 28px;
+    border-right: 0;
+    border-bottom: 6px solid var(--lg-green);
+  }
+
+  .lg-pitch__inner {
+    max-width: 560px;
+  }
+
+  .lg-panel {
+    justify-content: center;
+    padding: 32px 20px 48px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 520px) {
+  .lg-pitch {
+    padding: 28px 20px;
+  }
+
+  .lg-pitch p {
+    margin-bottom: 18px;
+  }
+
+  .lg-pitch ul {
+    display: none;
+  }
+
+  .lg-card {
+    padding: 26px 20px;
+    border-radius: 14px;
+  }
+
+  .lg-card h2 {
+    font-size: 1.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-field input,
+  .lg-submit {
+    transition: none;
+  }
+}
