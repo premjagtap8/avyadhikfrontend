@@ -6,6 +6,8 @@ import AdvisorForm from "./pages/enquiry/AdvisorForm";
 import Browse from "./pages/browse/Browse";
 import LocationPage from "./pages/browse/LocationPage";
 import CarePage from "./pages/browse/CarePage";
+import HomeDetails from "./pages/HomeDetails/HomeDetails";
+import BookingRequest from "./pages/bookingRequest/BookingRequest";
 import ListProperty from "./pages/listProperty/ListProperty";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
@@ -31,6 +33,8 @@ function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/browse" element={<Browse />} />
+          <Route path="/homes/:slug" element={<HomeDetails />} />
+          <Route path="/booking/:slug" element={<BookingRequest />} />
           <Route path="/assisted-living/:citySlug" element={<LocationPage />} />
           <Route path="/care/:careSlug" element={<CarePage />} />
           <Route path="/advisor" element={<AdvisorForm />} />

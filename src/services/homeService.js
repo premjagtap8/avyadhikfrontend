@@ -22,3 +22,14 @@ export async function fetchHomes(filters, signal) {
   }
   return body; // { success, count, total, page, pages, data: { homes } }
 }
+
+// Single home by slug (or id) -> GET /homes/:idOrSlug
+export async function fetchHomeBySlug(slug, signal) {
+  const res = await fetch(`${API_URL}/homes/${encodeURIComponent(slug)}`, { signal });
+  const body = await res.json().catch(() => null);
+
+  if (!res.ok || !body?.success) {
+    throw new Error(body?.message || "Could not load this residence. Please try again.");
+  }
+  return body; // { success, data: { home } }  (the page also accepts data: {...home})
+}
