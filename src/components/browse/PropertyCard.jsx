@@ -12,7 +12,12 @@ const formatRent = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 export default function PropertyCard({ home }) {
   const to = `/homes/${home.slug}`;
   const cityName = home.city?.name || "";
-  const cover = imageUrl(home.images?.[0]) || FALLBACK_IMG;
+  // Full http(s) links (e.g. demo images) load directly; backend paths go through imageUrl
+  const first = home.images?.[0];
+  const cover =
+    typeof first === "string" && first.startsWith("http")
+      ? first
+      : imageUrl(first) || FALLBACK_IMG;
 
   return (
     <article className="pc">

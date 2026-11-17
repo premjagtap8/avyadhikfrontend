@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchHomeBySlug } from "../../services/homeService";
+import { getDummyHome } from "../../data/dummyHomes";
 import { imageUrl } from "../../utils/imageUrl";
 import "./HomeDetails.css";
+
+// Demo fallback: only active when VITE_USE_DUMMY_DATA=true
+const USE_DUMMY = import.meta.env.VITE_USE_DUMMY_DATA === "true";
 
 const TABS = [
   { key: "lifestyle", label: "Lifestyle", icon: "M4 18v-5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v5M6 18v2M18 18v2M7 10V8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2" },
@@ -54,9 +58,21 @@ export default function HomeDetails() {
     setLoading(true);
     setError("");
     fetchHomeBySlug(slug, controller.signal)
-      .then((res) => setHome(res.data?.home || res.data))
+      .then((res) => {
+        const found = res.data?.home || res.data;
+        // Backend answered but had no home → try demo data
+        setHome(found || (USE_DUMMY ? getDummyHome(slug) : null));
+      })
       .catch((err) => {
         if (err.name === "AbortError") return;
+        // Backend failed → try demo data
+        if (USE_DUMMY) {
+          const demo = getDummyHome(slug);
+          if (demo) {
+            setHome(demo);
+            return;
+          }
+        }
         setError(err.message || "Something went wrong");
       })
       .finally(() => {
@@ -78,7 +94,10 @@ export default function HomeDetails() {
       </main>
     );
 
-  const images = (home.images || []).map((src) => imageUrl(src)).filter(Boolean);
+  // Full http(s) links (demo images) load directly; backend paths go through imageUrl
+  const images = (home.images || [])
+    .map((src) => (typeof src === "string" && src.startsWith("http") ? src : imageUrl(src)))
+    .filter(Boolean);
   const scores = home.scores || {};
   const current = TABS.find((t) => t.key === tab);
 

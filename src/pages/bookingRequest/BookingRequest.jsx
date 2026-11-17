@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchHomeBySlug } from "../../services/homeService";
 import { getServiceModels } from "../../services/masterService";
+import { getDummyHome, DUMMY_CARE_TYPES } from "../../data/dummyHomes";
 import "./BookingRequest.css";
 
 // Country code + number, digits only. Later you can set VITE_WHATSAPP_NUMBER in .env to override this.
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "917040956091";
+
+// Demo fallback: only active when VITE_USE_DUMMY_DATA=true
+const USE_DUMMY = import.meta.env.VITE_USE_DUMMY_DATA === "true";
 
 const RELATIONS = ["Self", "Son", "Daughter", "Spouse", "Other family", "Friend"];
 const MOVE_IN = ["Within 1 week", "Within 1 month", "1 to 3 months", "Just exploring"];
@@ -105,16 +109,36 @@ export default function BookingRequest() {
     const controller = new AbortController();
     setLoading(true);
     setLoadError("");
+
     fetchHomeBySlug(slug, controller.signal)
-      .then((res) => setHome(res.data?.home || res.data))
+      .then((res) => {
+        const found = res.data?.home || res.data;
+        // Backend answered but had no home → try demo data
+        setHome(found || (USE_DUMMY ? getDummyHome(slug) : null));
+      })
       .catch((err) => {
         if (err.name === "AbortError") return;
+        // Backend failed → try demo data
+        if (USE_DUMMY) {
+          const demo = getDummyHome(slug);
+          if (demo) {
+            setHome(demo);
+            return;
+          }
+        }
         setLoadError(err.message || "Something went wrong");
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
       });
-    getServiceModels().then(setCareTypes).catch(() => {});
+
+    // Care-type dropdown: use demo options if the backend gives none
+    getServiceModels()
+      .then((list) => setCareTypes(list?.length ? list : USE_DUMMY ? DUMMY_CARE_TYPES : []))
+      .catch(() => {
+        if (USE_DUMMY) setCareTypes(DUMMY_CARE_TYPES);
+      });
+
     return () => controller.abort();
   }, [slug]);
 

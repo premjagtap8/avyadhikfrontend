@@ -4,6 +4,7 @@ import FilterPanel from "../../components/browse/FilterPanel";
 import PropertyCard from "../../components/browse/PropertyCard";
 import CityGrid from "../../components/browse/CityGrid";
 import { fetchHomes } from "../../services/homeService";
+import { getDummyResponse } from "../../data/dummyHomes";
 import {
   LOCATION_OPTIONS,
   SORT_OPTIONS,
@@ -13,6 +14,9 @@ import "./Browse.css";
 
 const PAGE_SIZE = 12;
 
+// Demo fallback: only active when VITE_USE_DUMMY_DATA=true
+const USE_DUMMY = import.meta.env.VITE_USE_DUMMY_DATA === "true";
+
 const EMPTY_FILTERS = {
   city: "",
   care: "",
@@ -21,6 +25,9 @@ const EMPTY_FILTERS = {
   rating: "",
   facilities: [],
 };
+
+const hasActiveFilters = (f) =>
+  Boolean(f.city || f.care || f.stay || f.room || f.rating || f.facilities.length);
 
 const cityLabel = (value) =>
   LOCATION_OPTIONS.find((o) => o.value === value)?.label || value;
@@ -86,11 +93,22 @@ export default function Browse() {
 
     fetchHomes({ ...filters, page, limit: PAGE_SIZE }, controller.signal)
       .then((res) => {
+        // Backend worked but returned nothing (and no filters) → use demo data
+        if (USE_DUMMY && !res.data.homes.length && !hasActiveFilters(filters)) {
+          res = getDummyResponse(filters, page, PAGE_SIZE);
+        }
         setHomes(res.data.homes);
         setMeta({ total: res.total, pages: res.pages });
       })
       .catch((err) => {
         if (err.name === "AbortError") return;
+        if (USE_DUMMY) {
+          // Backend failed → use demo data
+          const res = getDummyResponse(filters, page, PAGE_SIZE);
+          setHomes(res.data.homes);
+          setMeta({ total: res.total, pages: res.pages });
+          return;
+        }
         setError(err.message || "Something went wrong");
       })
       .finally(() => {
