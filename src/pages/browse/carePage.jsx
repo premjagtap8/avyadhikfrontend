@@ -7,6 +7,9 @@ import { CARE_CONTENT, CARE_KEYWORDS } from "../../constants/careContent";
 import "./LocationPage.css"; // shared page styles (the .loc classes)
 import "./CarePage.css"; // extra styles for this page
 
+
+console.log("This is Care Page")
+
 const PAGE_SIZE = 9;
 
 const cityLabel = (value) =>
