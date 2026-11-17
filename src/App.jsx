@@ -5,7 +5,7 @@ import Home from "./pages/home/Home";
 import AdvisorForm from "./pages/enquiry/AdvisorForm";
 import Browse from "./pages/browse/Browse";
 import LocationPage from "./pages/browse/LocationPage";
-import CarePage from "./pages/browse/CarePage";
+import carePage from "./pages/browse/CarePage";
 import HomeDetails from "./pages/HomeDetails/HomeDetails";
 import BookingRequest from "./pages/bookingRequest/BookingRequest";
 import ListProperty from "./pages/listProperty/ListProperty";
