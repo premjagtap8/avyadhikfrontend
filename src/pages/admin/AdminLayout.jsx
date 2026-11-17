@@ -2,9 +2,10 @@ import { Link, NavLink, Navigate, Outlet, useLocation, useNavigate } from "react
 import "./AdminLayout.css";
 
 // One entry per admin page. Add a new page here and a matching <Route> in App.jsx.
-// Example: { to: "/admin/homes", label: "Homes" }
+// adminOnly: true hides the link from managers (they can still open /admin).
 const LINKS = [
   { to: "/admin/requests", label: "Provider requests" },
+  { to: "/admin/homes", label: "Homes", adminOnly: true },
 ];
 
 const readUser = () => {
@@ -29,6 +30,9 @@ export default function AdminLayout() {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
+  // Managers don't see admin-only links
+  const visibleLinks = LINKS.filter((l) => !l.adminOnly || user.role === "admin");
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -44,7 +48,7 @@ export default function AdminLayout() {
           </Link>
 
           <nav className="al-nav" aria-label="Admin">
-            {LINKS.map((l) => (
+            {visibleLinks.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}

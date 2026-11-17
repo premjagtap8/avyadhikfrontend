@@ -13,6 +13,8 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminHomes from "./pages/admin/AdminHomes";
+import AdminHomeForm from "./pages/admin/AdminHomeForm";
 
 // Public site: the main Navbar and the Footer stay, only the page between them changes
 function PublicLayout() {
@@ -47,6 +49,9 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="requests" replace />} />
           <Route path="requests" element={<AdminDashboard />} />
+          <Route path="homes" element={<AdminHomes />} />
+          <Route path="homes/new" element={<AdminHomeForm />} />
+          <Route path="homes/:id/edit" element={<AdminHomeForm />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -32,8 +32,22 @@ const formatDate = (value) =>
     year: "numeric",
   });
 
+const readUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user"));
+  } catch {
+    return null;
+  }
+};
+
+// r.home may be an id or a populated object
+const homeIdOf = (r) => (r.home && typeof r.home === "object" ? r.home._id : r.home) || "";
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
+
+  // Managers can open this page, but only admins can add homes
+  const isAdmin = readUser()?.role === "admin";
 
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
@@ -205,6 +219,7 @@ export default function AdminDashboard() {
                   {requests.map((r) => {
                     const open = openId === r._id;
                     const busy = busyId === r._id;
+                    const homeId = homeIdOf(r);
 
                     return [
                       <tr key={r._id} className={open ? "is-open" : ""}>
@@ -262,6 +277,26 @@ export default function AdminDashboard() {
                                 Reject
                               </button>
                             )}
+                            {isAdmin &&
+                              (homeId ? (
+                                <button
+                                  type="button"
+                                  className="ad-btn ad-btn--ghost"
+                                  onClick={() => navigate(`/admin/homes/${homeId}/edit`)}
+                                >
+                                  View home
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  className="ad-btn ad-btn--ghost"
+                                  onClick={() =>
+                                    navigate(`/admin/homes/new?request=${r._id}`)
+                                  }
+                                >
+                                  Add home
+                                </button>
+                              ))}
                           </div>
                         </td>
                       </tr>,
