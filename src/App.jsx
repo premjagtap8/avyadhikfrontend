@@ -36,7 +36,7 @@ function App() {
           <Route path="/homes/:slug" element={<HomeDetails />} />
           <Route path="/booking/:slug" element={<BookingRequest />} />
           <Route path="/assisted-living/:citySlug" element={<LocationPage />} />
-          <Route path="/care/:careSlug" element={<CarePage />} />
+          <Route path="/care/:careSlug" element={<carePage />} />
           <Route path="/advisor" element={<AdvisorForm />} />
           <Route path="/list-your-property" element={<ListProperty />} />
           <Route path="/login" element={<Login />} />
