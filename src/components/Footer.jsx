@@ -8,6 +8,9 @@ const CONTACT = {
   address: "123 Sample Street, Example Nagar, Mumbai, Maharashtra 400001",
 };
 
+// Same four words the Navbar prints under the logo.
+const TAGLINE = ["Care", "Equipment", "Technology", "Wellbeing"];
+
 // City and care links use the routes already in the app:
 //   /assisted-living/:citySlug  and  /care/:careSlug
 // The slugs match the backend seed data.
@@ -69,8 +72,25 @@ export default function Footer() {
         <div className="ft__grid">
           {/* Brand + contact */}
           <div className="ft__brand">
-            <Link to="/" className="ft__logo" aria-label="AvyaDhik home">
-              <img src={logo} alt="AvyaDhik" />
+            {/*
+              Same logo treatment as the Navbar: the JPG is cropped to the
+              icon + AVYADHIK part, the white background is removed with
+              mix-blend-mode: multiply, and the tagline is real text.
+              Same file, same colours, so the two logos match exactly.
+            */}
+            <Link
+              to="/"
+              className="ft__logo"
+              aria-label="AvyaDhik: Care, Equipment, Technology, Wellbeing. Go to home page"
+            >
+              <span className="ft__logo-mark">
+                <img src={logo} alt="" decoding="async" />
+              </span>
+              <span className="ft__logo-words" aria-hidden="true">
+                {TAGLINE.map((word) => (
+                  <span key={word}>{word}</span>
+                ))}
+              </span>
             </Link>
 
             <p className="ft__tagline">

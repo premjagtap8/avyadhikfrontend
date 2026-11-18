@@ -1,51 +1,108 @@
+/* AvyaDhik advisor form (/advisor).
+   Same tokens, font and shapes as Navbar.css / Footer.css / Browse.css:
+   navy + teal, Inter, pill buttons.
+   Self-contained: no dependency on global .btn classes.
+
+   Optional: set --nav-h on :root (in Navbar.css) per breakpoint, e.g.
+   96px / 88px / 76px, so this page always fills exactly the space under the navbar. */
+
 .adv {
-  min-height: calc(100vh - 72px);
+  /* Palette: identical to Navbar.css */
+  --navy: #0a3a73;
+  --navy-dark: #072a54;
+  --teal: #00a38c;
+  --teal-dark: #008572;
+  --teal-soft: #e0f5f1;
+  --ink: #1c2b3f;
+  --muted: #5d6b7e;
+  --line: #e3e9f1;
+  --line-strong: #c8d3e0;
+  --soft: #f1f6fb;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+
+  /* Fluid spacing scale: shrinks smoothly from desktop to phone, no jumps */
+  --space-card: clamp(1.25rem, 0.6rem + 2.6vw, 2.5rem);
+  --space-pitch-x: clamp(1.125rem, 0.4rem + 3.4vw, 3rem);
+  --space-pitch-y: clamp(2rem, 1rem + 4vw, 4rem);
+  --control-h: 48px; /* comfortable touch target (>= 44px) */
+
   display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  min-height: calc(100dvh - var(--nav-h, 96px));
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   color: var(--ink);
-  background: var(--soft);
+  background:
+    radial-gradient(ellipse 60% 50% at 100% 0%, rgba(0, 163, 140, 0.08), transparent 70%),
+    var(--soft);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+.adv *,
+.adv *::before,
+.adv *::after {
+  box-sizing: border-box;
 }
 
-/* Left pitch panel */
+/* Keyboard focus: one consistent ring for everything that is not a text field */
+.adv a:focus-visible,
+.adv button:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+/* ---------- Left pitch panel ---------- */
 .adv-pitch {
-  padding: 64px 48px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  color: var(--white);
-  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-dark) 100%);
+  padding: var(--space-pitch-y) var(--space-pitch-x);
+  color: #fff;
+  background:
+    radial-gradient(ellipse 70% 50% at 0% 100%, rgba(0, 163, 140, 0.3), transparent 70%),
+    linear-gradient(160deg, var(--navy) 0%, var(--navy-dark) 100%);
 }
+
+/* Eyebrow pill */
 .adv-eyebrow {
-  margin: 0 0 14px;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #7fe0d0;
+  align-self: flex-start;
+  margin: 0 0 16px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #bdf2ea;
+  font-size: 0.82rem;
+  font-weight: 600;
 }
-.adv-eyebrow.dark {
+.adv-eyebrow--dark {
+  background: var(--teal-soft);
   color: var(--teal-dark);
-  margin-bottom: 8px;
+  margin-bottom: 14px;
 }
+
 .adv-pitch h1 {
+  max-width: 14ch;
   margin: 0 0 20px;
-  font-size: clamp(32px, 4vw, 48px);
-  line-height: 1.1;
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 .adv-lead {
+  max-width: 46ch;
   margin: 0 0 32px;
-  max-width: 460px;
-  font-size: 17px;
-  line-height: 1.6;
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.075rem);
+  line-height: 1.65;
+  text-wrap: pretty;
   color: #d3e1f2;
 }
 .adv-points {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: grid;
   gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 .adv-points li {
   display: grid;
@@ -54,264 +111,452 @@
   border-left: 3px solid var(--teal);
 }
 .adv-points strong {
-  font-size: 16px;
+  font-size: 1rem;
 }
 .adv-points span {
-  font-size: 14.5px;
+  font-size: 0.92rem;
+  line-height: 1.5;
   color: #b9cde6;
 }
 
-/* Right form card */
+/* ---------- Right form card ---------- */
 .adv-card {
   align-self: center;
   justify-self: center;
-  width: calc(100% - 48px);
-  max-width: 680px;
-  margin: 32px 24px;
-  padding: 40px;
-  background: var(--white);
+  /* min() replaces the old "width: calc(100% - 48px)" + margin combo:
+     the card is never wider than 700px and always keeps a 24px gutter. */
+  width: min(100% - 48px, 700px);
+  margin-block: 32px;
+  padding: var(--space-card);
+  border: 1px solid var(--line);
   border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(10, 58, 115, 0.12);
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(10, 58, 115, 0.04), 0 18px 48px rgba(10, 58, 115, 0.1);
 }
 .adv-heading {
   margin: 0 0 20px;
-  font-size: 30px;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   color: var(--navy);
+  text-wrap: balance;
 }
 
 .adv-progress {
-  height: 5px;
+  height: 6px;
+  overflow: hidden;
   border-radius: 999px;
   background: var(--line);
-  overflow: hidden;
 }
 .adv-progress span {
   display: block;
   height: 100%;
+  border-radius: inherit;
   background: var(--teal);
-  transition: width 0.3s;
+  transition: width 0.3s ease;
 }
 .adv-step {
-  margin: 12px 0 18px;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  margin: 12px 0 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
 }
 .adv-title {
   margin: 0 0 6px;
-  font-size: 24px;
+  /* focus() on step change would otherwise tuck the title under a sticky navbar */
+  scroll-margin-top: calc(var(--nav-h, 96px) + 16px);
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--navy);
 }
+.adv-title:focus,
+.adv-done h2:focus {
+  outline: none; /* focus is moved here for screen readers only */
+}
 .adv-help {
+  max-width: 56ch;
   margin: 0 0 24px;
+  font-size: 0.95rem;
+  line-height: 1.55;
   color: var(--muted);
-  font-size: 15px;
+  text-wrap: pretty;
 }
 
-/* Fields */
+/* ---------- Fields ---------- */
 .adv-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
 }
 .adv-field {
-  display: grid;
-  gap: 6px;
+  min-width: 0; /* fieldsets default to min-content width and can overflow a grid cell */
   margin: 0 0 18px;
   padding: 0;
   border: 0;
-  min-width: 0;
 }
-.adv-field label,
-.adv-field legend {
+/* Child combinator keeps these rules off the radio-card labels (.adv-choice),
+   so no !important is needed. */
+.adv-field > label,
+.adv-field > legend {
+  display: block;
+  margin: 0 0 8px;
   padding: 0;
-  font-size: 14px;
+  font-size: 0.88rem;
   font-weight: 600;
+  color: var(--navy);
 }
+
 .adv-field select,
 .adv-field input[type="text"],
 .adv-field input[type="email"],
 .adv-field input[type="tel"] {
   width: 100%;
-  box-sizing: border-box;
-  height: 52px;
-  padding: 0 14px;
-  border: 1px solid #c9d4e2;
+  min-height: var(--control-h);
+  padding: 12px 14px;
+  border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--white);
-  font: inherit;
-  font-size: 15.5px;
+  background-color: #fff;
   color: var(--ink);
-}
-.adv-field select:focus,
-.adv-field input:focus {
-  outline: 2px solid var(--teal);
-  outline-offset: 0;
-  border-color: var(--teal);
+  font: inherit;
+  /* 16px minimum: iOS Safari zooms the page on focus when a control is smaller */
+  font-size: 1rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
+/* Custom chevron so selects look identical on every OS */
+.adv-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 42px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235d6b7e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  text-overflow: ellipsis;
+}
+.adv-field input::placeholder {
+  color: #8a97a8;
+}
+
+@media (hover: hover) {
+  .adv-field select:hover,
+  .adv-field input[type="text"]:hover,
+  .adv-field input[type="email"]:hover,
+  .adv-field input[type="tel"]:hover {
+    border-color: var(--line-strong);
+  }
+}
+
+.adv-field select:focus,
+.adv-field input:focus {
+  /* transparent (not none) so the ring is still drawn in Windows High Contrast mode */
+  outline: 2px solid transparent;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 163, 140, 0.18);
+}
+.adv-field [aria-invalid="true"] {
+  border-color: var(--danger);
+}
+.adv-field [aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.15);
+}
+
+/* Phone: "+91" box + input inside one rounded border */
 .adv-phone {
   display: flex;
-  align-items: center;
-  border: 1px solid #c9d4e2;
-  border-radius: 12px;
+  align-items: stretch;
   overflow: hidden;
+  min-height: var(--control-h);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+@media (hover: hover) {
+  .adv-phone:hover {
+    border-color: var(--line-strong);
+  }
+}
+.adv-phone:focus-within {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 163, 140, 0.18);
+}
+.adv-phone:has(input[aria-invalid="true"]) {
+  border-color: var(--danger);
+}
+.adv-phone:has(input[aria-invalid="true"]):focus-within {
+  box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.15);
 }
 .adv-phone span {
-  padding: 0 12px;
-  height: 52px;
-  display: flex;
-  align-items: center;
+  display: grid;
+  place-items: center;
+  padding: 0 14px;
+  border-right: 1px solid var(--line);
   background: var(--soft);
   font-weight: 600;
   color: var(--muted);
 }
-.adv-phone input {
-  border: 0 !important;
-  border-radius: 0 !important;
-}
-.adv-phone:focus-within {
-  outline: 2px solid var(--teal);
-  border-color: var(--teal);
-}
-.adv-phone input:focus {
-  outline: none;
+/* The input gives up its own border/ring so there is no box inside the box.
+   Higher specificity than the generic field rules, so no !important. */
+.adv-field .adv-phone input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-/* Radio cards */
+/* ---------- Choice cards (radio pills) ---------- */
 .adv-choices {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
 .adv-choice {
+  position: relative; /* keeps the hidden radio from causing scroll jumps */
   display: inline-flex;
   align-items: center;
-  padding: 11px 16px;
-  border: 1px solid #c9d4e2;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid var(--line);
   border-radius: 999px;
-  font-size: 14.5px;
-  font-weight: 500 !important;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.2;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
+/* Visually hidden but still focusable and announced */
 .adv-choice input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
-.adv-choice:hover {
-  border-color: var(--teal);
+@media (hover: hover) {
+  .adv-choice:hover {
+    border-color: var(--teal);
+    background: var(--teal-soft);
+  }
 }
-.adv-choice.on {
+.adv-choice.is-on {
   border-color: var(--teal);
-  background: #e6f6f3;
-  color: var(--navy);
-  font-weight: 600 !important;
+  background: var(--teal-soft);
+  color: var(--teal-dark);
+  font-weight: 600;
 }
 .adv-choice:has(input:focus-visible) {
   outline: 2px solid var(--teal);
+  outline-offset: 2px;
 }
 
-/* Consent */
+/* ---------- Consent ---------- */
 .adv-consent {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   margin: 4px 0 6px;
-  font-size: 14.5px;
+  font-size: 0.92rem;
   line-height: 1.5;
   cursor: pointer;
 }
 .adv-consent input {
-  width: 18px;
-  height: 18px;
-  margin-top: 2px;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
   accent-color: var(--teal);
 }
+.adv-consent input:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+/* The consent checkbox sits outside .adv-field, so it needs its own invalid state */
+.adv-consent input[aria-invalid="true"] {
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+}
 
-/* Messages */
+/* ---------- Messages ---------- */
 .adv-error {
   display: block;
-  color: #c0392b;
-  font-size: 13px;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--danger);
 }
 .adv-banner {
-  margin: 14px 0 0;
+  margin: 16px 0 0;
   padding: 12px 14px;
-  border-radius: 10px;
-  background: #fdecea;
-  color: #a5281b;
-  font-size: 14.5px;
+  border-radius: 12px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
-/* Buttons row */
+/* ---------- Buttons: same pills as the navbar ---------- */
 .adv-actions {
   display: flex;
-  gap: 12px;
   flex-wrap: wrap;
+  gap: 12px;
   margin-top: 24px;
 }
-.adv-actions .btn {
-  padding: 14px 26px;
-  font-size: 15.5px;
+.adv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-h);
+  padding: 12px 26px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.97rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
 }
-.adv-actions .btn:disabled {
+.adv-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.adv-btn--primary {
+  border: 1px solid var(--navy);
+  background: var(--navy);
+  color: #fff;
+}
+.adv-btn--ghost {
+  border: 1px solid var(--navy);
+  background: transparent;
+  color: var(--navy);
+}
+@media (hover: hover) {
+  .adv-btn--primary:hover:not(:disabled) {
+    border-color: var(--teal);
+    background: var(--teal);
+  }
+  .adv-btn--ghost:hover {
+    background: var(--navy);
+    color: #fff;
+  }
+}
+.adv-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 .adv-privacy {
   margin: 18px 0 0;
-  font-size: 13px;
+  font-size: 0.8rem;
+  line-height: 1.5;
   color: var(--muted);
 }
 
-/* Thank-you state */
+/* ---------- Thank-you state ---------- */
 .adv-done {
-  text-align: center;
   padding: 24px 0;
+  text-align: center;
 }
 .adv-done h2 {
   margin: 16px 0 8px;
+  font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.5rem);
   color: var(--navy);
+  text-wrap: balance;
 }
 .adv-done p {
-  color: var(--muted);
-  max-width: 420px;
+  max-width: 44ch;
   margin: 0 auto;
+  line-height: 1.6;
+  color: var(--muted);
+  text-wrap: pretty;
 }
 .adv-done .adv-actions {
   justify-content: center;
 }
 .adv-tick {
+  display: grid;
+  place-items: center;
   width: 64px;
   height: 64px;
   margin: 0 auto;
-  display: grid;
-  place-items: center;
   border-radius: 50%;
-  background: var(--teal);
-  color: var(--white);
-  font-size: 32px;
+  background: var(--teal-soft);
+  color: var(--teal-dark);
+  font-size: 2rem;
+  font-weight: 700;
 }
 
-/* Responsive */
+/* ---------- Responsive ---------- */
+
+/* Small laptop / large tablet: give the form more room */
+@media (max-width: 1100px) {
+  .adv {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  }
+}
+
+/* Tablet: pitch stacks above the form */
 @media (max-width: 900px) {
   .adv {
     grid-template-columns: 1fr;
+    min-height: 0;
   }
-  .adv-pitch {
-    padding: 40px 24px;
+  .adv-pitch h1 {
+    max-width: none;
+  }
+  .adv-lead {
+    margin-bottom: 24px;
+  }
+  /* Two benefits side by side so the pitch stays short and the form comes up sooner */
+  .adv-points {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .adv-card {
+    width: min(100% - 32px, 700px);
+    margin-block: 24px 40px;
   }
 }
+
+/* Mobile */
 @media (max-width: 560px) {
+  .adv-points {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .adv-lead {
+    margin-bottom: 20px;
+  }
   .adv-card {
-    width: calc(100% - 24px);
-    margin: 12px;
-    padding: 24px 18px;
+    width: min(100% - 24px, 700px);
+    margin-block: 16px 32px;
+    border-radius: 20px;
   }
   .adv-grid {
     grid-template-columns: 1fr;
+  }
+  /* Primary action first on small screens: thumb reaches it without scrolling past Back */
+  .adv-actions {
+    flex-direction: column-reverse;
+  }
+  .adv-actions .adv-btn {
+    width: 100%;
+  }
+  .adv-done .adv-actions {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adv *,
+  .adv *::before,
+  .adv *::after {
+    transition: none !important;
   }
 }

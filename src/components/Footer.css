@@ -1,17 +1,40 @@
-/* AvyaDhik footer. Navy and teal, taken from the logo. */
+/* AvyaDhik footer. Light surface so the real logo (navy + teal) shows
+   in its true colours, exactly like the Navbar. */
 
 .ft {
-  --navy-dark: #072a52;
-  --navy-deep: #051f3d;
-  --teal: #0f9b8e;
-  --teal-light: #5fd3c6;
-  --text: #d3deec;
-  --text-dim: #93a8c2;
+  /* Same palette as Navbar.css */
+  --navy: #0a3a73;
+  --teal: #00a38c;
+  --teal-dark: #008572;
+  --ink: #1c2b3f;
+  --muted: #5d6b7e;
+  --line: #e3e9f1;
+  --soft: #f1f6fb;
 
-  background: linear-gradient(180deg, var(--navy-dark) 0%, var(--navy-deep) 100%);
-  color: var(--text);
-  padding: 64px 0 28px;
+  /* Same logo sizing + crop as the Navbar */
+  --logo-h: 100px;
+  --logo-cut-top: 0.12;
+  --logo-cut-bottom: 0.16;
+
+  position: relative;
+  isolation: isolate;            /* keeps the logo blend inside the footer */
+  overflow: hidden;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--ink);
+  padding: 72px 0 28px;
   margin-top: 0;
+  background:
+    radial-gradient(ellipse 50% 60% at 8% 0%, rgba(0, 163, 140, 0.08), transparent 70%),
+    var(--soft);
+}
+
+/* Thin teal accent line along the top edge */
+.ft::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal) 0%, #5fd3c6 50%, transparent 100%);
 }
 
 .ft *,
@@ -23,6 +46,11 @@
 .ft a {
   color: inherit;
   text-decoration: none;
+}
+.ft a:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 .ft__container {
@@ -38,27 +66,65 @@
   padding-bottom: 56px;
 }
 
-/* Logo sits on a white card because the logo file has a white background */
+/* ---------- Logo: identical treatment to the Navbar ----------
+   1. .ft__logo-mark is a window that shows only the icon + AVYADHIK part
+      of the JPG (the tiny baked-in tagline is cropped away).
+   2. mix-blend-mode: multiply makes the white JPG background disappear.
+   3. brightness/contrast push the faint off-white JPG noise to pure white,
+      so multiply removes it completely (this is what caused the faint
+      "sticker" square).
+   4. The four tagline words are real text, same as the Navbar. */
 .ft__logo {
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
   margin-bottom: 22px;
-  padding: 8px 14px;
-  background: #fff;
-  border-radius: 14px;
-  line-height: 0;
+  border-radius: 10px;
+  transition: opacity 0.2s ease;
 }
-.ft__logo img {
+.ft__logo:hover {
+  opacity: 0.85;
+}
+
+.ft__logo-mark {
   display: block;
-  height: 64px;
+  height: calc(var(--logo-h) * (1 - var(--logo-cut-top) - var(--logo-cut-bottom)));
+  overflow: hidden;
+}
+.ft__logo-mark img {
+  display: block;
+  height: var(--logo-h);
   width: auto;
+  margin-top: calc(var(--logo-h) * var(--logo-cut-top) * -1);
+  filter: brightness(1.06) contrast(1.05);
+  mix-blend-mode: multiply;
+}
+
+.ft__logo-words {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.ft__logo-words span + span::before {
+  content: "\2022";
+  margin-right: 5px;
+  color: var(--teal);
 }
 
 .ft__tagline {
-  margin: 0 0 24px;
+  margin: 0 0 26px;
   max-width: 400px;
-  font-size: 1.12rem;
-  line-height: 1.6;
-  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  text-wrap: pretty;
+  color: var(--ink);
 }
 
 .ft__contact {
@@ -74,40 +140,57 @@
   gap: 12px;
   font-size: 0.95rem;
   line-height: 1.5;
-  color: #fff;
+  color: var(--ink);
 }
 .ft__contact svg {
   flex-shrink: 0;
   margin-top: 2px;
-  color: var(--teal-light);
+  color: var(--teal-dark);
 }
 .ft__contact a {
-  transition: color 0.15s ease;
+  transition: color 0.2s ease;
 }
 .ft__contact a:hover {
-  color: var(--teal-light);
+  color: var(--teal-dark);
 }
 
 .ft__col h3 {
-  margin: 0 0 22px;
-  font-size: 1.15rem;
+  position: relative;
+  margin: 0 0 24px;
+  padding-bottom: 12px;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: #fff;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+/* small teal underline under each heading */
+.ft__col h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 28px;
+  height: 2px;
+  background: var(--teal);
+  border-radius: 2px;
 }
 .ft__col ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 15px;
+  gap: 14px;
 }
 .ft__col a {
+  display: inline-block;
   font-size: 0.95rem;
-  color: var(--text);
-  transition: color 0.15s ease;
+  color: var(--ink);
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 .ft__col a:hover {
-  color: var(--teal-light);
+  color: var(--teal-dark);
+  transform: translateX(4px);
 }
 
 /* ---------- Bottom bar ---------- */
@@ -118,9 +201,9 @@
   flex-wrap: wrap;
   gap: 12px 28px;
   padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid var(--line);
   font-size: 0.84rem;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 .ft__bottom nav {
   display: flex;
@@ -128,14 +211,18 @@
   gap: 8px 26px;
 }
 .ft__bottom a {
-  transition: color 0.15s ease;
+  transition: color 0.2s ease;
 }
 .ft__bottom a:hover {
-  color: var(--teal-light);
+  color: var(--teal-dark);
 }
 
-/* ---------- Responsive ---------- */
+/* ---------- Tablet ---------- */
 @media (max-width: 980px) {
+  .ft {
+    --logo-h: 92px;
+    padding: 60px 0 26px;
+  }
   .ft__grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 40px 28px;
@@ -145,9 +232,11 @@
   }
 }
 
+/* ---------- Mobile ---------- */
 @media (max-width: 620px) {
   .ft {
-    padding: 44px 0 24px;
+    --logo-h: 80px;
+    padding: 48px 0 24px;
   }
   .ft__container {
     width: calc(100% - 32px);
@@ -157,14 +246,31 @@
     gap: 32px 20px;
     padding-bottom: 40px;
   }
-  .ft__logo img {
-    height: 54px;
+  .ft__logo-words {
+    font-size: 9.5px;
+    gap: 4px;
+  }
+  .ft__logo-words span + span::before {
+    margin-right: 4px;
   }
   .ft__tagline {
-    font-size: 1.02rem;
+    font-size: 1rem;
+  }
+  /* third column (For families) spans full width so nothing gets squeezed */
+  .ft__col:last-of-type {
+    grid-column: 1 / -1;
   }
   .ft__bottom {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ft * {
+    transition: none !important;
+  }
+  .ft__col a:hover {
+    transform: none;
   }
 }

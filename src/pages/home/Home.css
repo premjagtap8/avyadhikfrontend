@@ -9,6 +9,10 @@
   --muted: #3d4f66;
   --line: #dbe3ec;
 
+  /* Search pill: one gutter used by the label text, the select text AND the
+     dropdown options, so everything lines up on the same left edge. */
+  --search-gutter: 24px;
+
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   color: var(--ink);
   background: #fff;
@@ -29,16 +33,17 @@
   margin-inline: auto;
 }
 
-/* ---------- Hero: full-width background image ---------- */
+/* ---------- Hero: text in the sky, couple left fully clear ---------- */
 .hm-hero {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;      /* text hugs the top so the lower image stays open */
   justify-content: center;
-  min-height: clamp(640px, calc(100vh - 90px), 860px);
-  padding: 72px 0 64px;
+  /* Taller on wide screens so the bench + both heads are never cut */
+  min-height: clamp(560px, 46vw + 120px, 780px);
+  padding: clamp(48px, 6vw, 84px) 0 0;
   overflow: hidden;
-  background: #cfe0ee; /* shown until the image loads */
+  background: #cfe0ee;          /* shown until the image loads */
 }
 
 .hm-hero__bg {
@@ -47,16 +52,18 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 60%;
+  /* Anchor to the bottom: the couple + bench live there and must not be cropped */
+  object-position: 30% 85%;
 }
 
-/* Light veil so the navy text stays readable on a bright sky */
+/* Soft fade ONLY behind the headline; the lower 55% is untouched */
 .hm-hero__veil {
   position: absolute;
   inset: 0;
+  pointer-events: none;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 42%, rgba(255, 255, 255, 0.55), transparent 70%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.1) 55%, rgba(255, 255, 255, 0) 100%);
+    radial-gradient(ellipse 60% 40% at 50% 22%, rgba(255, 255, 255, 0.6), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.15) 38%, rgba(255, 255, 255, 0) 55%);
 }
 
 .hm-hero__inner {
@@ -69,7 +76,7 @@
 }
 
 .hm-eyebrow {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -78,11 +85,12 @@
 }
 
 .hm-hero h1 {
-  margin: 0 0 20px;
+  margin: 0 0 18px;
   max-width: 900px;
-  font-size: clamp(2.4rem, 5.6vw, 4.4rem);
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
   line-height: 1.08;
   letter-spacing: -0.02em;
+  text-wrap: balance;
   color: var(--navy);
 }
 .hm-hero h1 em {
@@ -91,65 +99,144 @@
 }
 
 .hm-lede {
-  margin: 0 0 34px;
-  max-width: 640px;
+  margin: 0;
+  max-width: 620px;
   font-size: 1.15rem;
   font-weight: 500;
-  line-height: 1.65;
+  line-height: 1.6;
+  text-wrap: pretty;
   color: var(--ink);
+}
+
+/* ---------- Finder: overlaps only the bottom edge of the hero ---------- */
+.hm-finder {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: -44px;            /* only covers the bench base, never the couple */
+  padding-bottom: 36px;
 }
 
 /* ---------- Search pill ---------- */
 .hm-search {
   display: flex;
   align-items: stretch;
-  width: min(100%, 720px);
+  width: min(100%, 760px);
   padding: 8px;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: #fff;
+  border: 1px solid var(--line);
   border-radius: 999px;
-  box-shadow: 0 18px 48px rgba(7, 42, 82, 0.22);
+  box-shadow: 0 18px 48px rgba(7, 42, 82, 0.2);
 }
 
+/* FIX 1: the label no longer has horizontal padding.
+   Before, the label had "padding: 8px 24px", which pushed the <select> 24px in
+   from the pill edge. The browser opens the native dropdown at the select's own
+   border box, so the option list started 24px inside the pill, and because the
+   select had "padding-left: 0" the option text touched the list's left edge.
+   Now the label is a plain wrapper and the select fills it edge to edge. */
 .hm-search label {
+  position: relative;
   flex: 1;
   min-width: 0;
   display: grid;
-  gap: 4px;
-  padding: 8px 22px;
+  gap: 2px;
+  padding: 0;
   text-align: left;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
-.hm-search label + label {
-  border-left: 1px solid var(--line);
+@media (hover: hover) {
+  .hm-search label:hover {
+    background: #f4f8fb;
+  }
 }
+
+/* FIX 2: the divider is a pseudo-element, not "border-left" on a pill.
+   Before, "label + label" had border-left plus "border-radius: 0 999px 999px 0",
+   which made the second field's hover/focus background flat on the left and
+   round on the right (visible in the screenshot). Both fields are now
+   identical full pills and the divider floats between them. */
+.hm-search label + label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 1px;
+  background: var(--line);
+  pointer-events: none;
+}
+
 .hm-search label span {
+  padding: 10px var(--search-gutter) 0;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
+  transition: color 0.2s ease;
 }
 
 .hm-search select {
   width: 100%;
-  padding: 2px 22px 2px 0;
+  min-height: 36px;
+  /* FIX 3: left padding is the same gutter as the label text above it, so the
+     value, the label and the dropdown options all share one left edge.
+     Right padding leaves room for the chevron. */
+  padding: 2px calc(var(--search-gutter) + 28px) 10px var(--search-gutter);
   font: inherit;
   font-size: 1rem;
   font-weight: 500;
   color: var(--ink);
   background: transparent
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230b3a6e' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
-    no-repeat right center;
+    no-repeat right var(--search-gutter) center;
   border: 0;
+  border-radius: 999px;
   appearance: none;
   -webkit-appearance: none;
+  color-scheme: light;          /* keeps the native list light even in dark-mode OS themes */
   cursor: pointer;
+  text-overflow: ellipsis;
 }
 .hm-search select:focus {
   outline: none;
 }
+
+/* FIX 4: style the option list itself.
+   Chromium/Edge/Firefox let you set padding, colour and background on <option>.
+   Padding gives every option breathing room from the list edge, and the
+   explicit colours stop the list inheriting the select's transparent background.
+   (On macOS/iOS the list is drawn by the OS and ignores this: it is already
+   padded there, so nothing breaks.) */
+.hm-search select option {
+  padding: 10px 14px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 500;
+}
+.hm-search select option:checked {
+  background: #e3f3f1;
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.hm-search label:focus-within {
+  background: #eef6f6;
+}
 .hm-search label:focus-within span {
   color: var(--teal-dark);
+}
+/* Keyboard users get a real ring (the select's own outline is removed above) */
+.hm-search label:has(select:focus-visible) {
+  outline: 2px solid var(--teal);
+  outline-offset: -2px;
 }
 
 .hm-btn {
@@ -158,7 +245,8 @@
   justify-content: center;
   gap: 10px;
   flex-shrink: 0;
-  padding: 0 34px;
+  min-height: 52px;
+  padding: 0 36px;
   font: inherit;
   font-size: 1rem;
   font-weight: 700;
@@ -167,22 +255,28 @@
   border: 0;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
-.hm-btn:hover {
-  background: var(--teal);
+@media (hover: hover) {
+  .hm-btn:hover {
+    background: var(--teal);
+  }
+}
+.hm-btn:active {
+  transform: scale(0.98);
+}
+.hm-btn:focus-visible,
+.hm-quick a:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
 }
 
-/* ---------- Popular + benefits card ---------- */
+/* ---------- Popular + benefits: plain row on white, no longer over the photo ---------- */
 .hm-meta {
   display: grid;
   gap: 14px;
-  margin-top: 22px;
-  padding: 16px 28px;
-  width: min(100%, 640px);
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 22px;
-  box-shadow: 0 10px 30px rgba(7, 42, 82, 0.14);
+  width: min(100%, 900px);
 }
 
 .hm-quick {
@@ -191,9 +285,7 @@
   justify-content: center;
   align-items: center;
   gap: 6px 20px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--line);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
 .hm-quick span {
   font-size: 0.78rem;
@@ -208,22 +300,27 @@
   text-decoration: underline;
   text-decoration-color: var(--teal);
   text-underline-offset: 4px;
+  transition: color 0.2s ease;
 }
-.hm-quick a:hover {
-  color: var(--teal-dark);
+@media (hover: hover) {
+  .hm-quick a:hover {
+    color: var(--teal-dark);
+  }
 }
 
 .hm-proof {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px 22px;
+  gap: 8px 28px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
 }
 .hm-proof span {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--ink);
 }
@@ -232,18 +329,61 @@
   color: var(--teal-dark);
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 760px) {
+/* ---------- Tablet ---------- */
+@media (max-width: 1024px) {
   .hm-hero {
-    min-height: 0;
-    padding: 48px 0 44px;
+    min-height: clamp(520px, 62vw + 60px, 680px);
   }
+  .hm-hero__bg {
+    object-position: 25% 88%;
+  }
+  .hm {
+    --search-gutter: 20px;      /* slightly tighter, still one shared edge */
+  }
+}
+
+/* ---------- Mobile: text on top, photo gets its own clear band ---------- */
+@media (max-width: 760px) {
+  .hm {
+    --search-gutter: 16px;
+  }
+
   .hm-container {
     width: calc(100% - 32px);
   }
+
+  .hm-hero {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    padding: 36px 0 0;
+    background: #eaf2f8;
+  }
+  .hm-hero__veil {
+    display: none;
+  }
+  .hm-hero__inner {
+    order: 1;
+    width: calc(100% - 32px);
+    padding-bottom: 24px;
+  }
+  /* image leaves absolute positioning and becomes a normal block */
+  .hm-hero__bg {
+    order: 2;
+    position: relative;
+    inset: auto;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-position: 22% 80%;
+  }
+
   .hm-lede {
     font-size: 1.02rem;
-    margin-bottom: 26px;
+  }
+
+  .hm-finder {
+    margin-top: -32px;
+    padding-bottom: 28px;
   }
 
   /* pill turns into a stacked card */
@@ -254,11 +394,20 @@
     border-radius: 24px;
   }
   .hm-search label {
-    padding: 10px 14px;
+    border-radius: 14px;
   }
-  .hm-search label + label {
-    border-left: 0;
-    border-top: 1px solid var(--line);
+  .hm-search select {
+    border-radius: 14px;
+    min-height: 44px;           /* comfortable touch target */
+  }
+  /* divider turns horizontal between the two stacked fields */
+  .hm-search label + label::before {
+    top: -2px;
+    bottom: auto;
+    left: var(--search-gutter);
+    right: var(--search-gutter);
+    width: auto;
+    height: 1px;
   }
   .hm-btn {
     width: 100%;
@@ -266,12 +415,16 @@
     margin-top: 6px;
   }
 
-  .hm-meta {
-    padding: 14px 16px;
-  }
   .hm-proof {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+  }
+}
+
+/* ---------- Respect reduced-motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hm * {
+    transition: none !important;
   }
 }

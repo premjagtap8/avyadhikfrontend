@@ -201,7 +201,20 @@ export default function ListingForm() {
               <input id="lf-email" type="email" value={values.email} onChange={set("email")} autoComplete="email" {...aria("email")} />
             </Field>
             <Field id="lf-phone" label="Phone number" error={errors.phone}>
-              <input id="lf-phone" type="tel" value={values.phone} onChange={set("phone")} autoComplete="tel" {...aria("phone")} />
+              {/* +91 is shown as a fixed prefix; cleanPhone() still strips it if someone types or pastes it */}
+              <div className="lp-phone">
+                <span aria-hidden="true">+91</span>
+                <input
+                  id="lf-phone"
+                  type="tel"
+                  inputMode="numeric"
+                  value={values.phone}
+                  onChange={set("phone")}
+                  autoComplete="tel-national"
+                  placeholder="98765 43210"
+                  {...aria("phone")}
+                />
+              </div>
             </Field>
             <Field id="lf-websiteUrl" label="Property website (optional)" error={errors.websiteUrl}>
               <input id="lf-websiteUrl" type="url" value={values.websiteUrl} onChange={set("websiteUrl")} placeholder="https://" {...aria("websiteUrl")} />

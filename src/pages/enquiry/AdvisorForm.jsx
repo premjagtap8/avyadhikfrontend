@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { STATES, LOOKING_FOR, MONTHLY_BUDGET } from "../../constants/options";
 import { getServiceModels } from "../../services/masterService";
@@ -66,6 +66,10 @@ export default function AdvisorForm() {
   const [submitError, setSubmitError] = useState("");
   const [done, setDone] = useState(false);
 
+  const titleRef = useRef(null);
+  const doneRef = useRef(null);
+  const firstRender = useRef(true);
+
   // FR-44: the support options come from the service models in the database
   useEffect(() => {
     getServiceModels()
@@ -73,10 +77,43 @@ export default function AdvisorForm() {
       .catch(() => setCareError("Could not load care types. Please refresh the page."));
   }, []);
 
+  // Move focus to the new step title so keyboard and screen reader users know it changed
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    titleRef.current?.focus();
+  }, [step]);
+
+  // Same for the thank-you screen: the form disappears, so focus would otherwise be lost
+  useEffect(() => {
+    if (done) doneRef.current?.focus();
+  }, [done]);
+
   const set = (name, value) => {
     setForm((f) => ({ ...f, [name]: value }));
     setErrors((e) => ({ ...e, [name]: undefined }));
   };
+
+  // Marks a control invalid and links it to its error message
+  const aria = (name) => ({
+    "aria-invalid": errors[name] ? "true" : undefined,
+    "aria-describedby": errors[name] ? `adv-${name}-err` : undefined,
+  });
+
+  // Fieldsets (radio groups) are not valid targets for aria-invalid,
+  // so they only get the link to the error message.
+  const ariaGroup = (name) => ({
+    "aria-describedby": errors[name] ? `adv-${name}-err` : undefined,
+  });
+
+  const fieldError = (name) =>
+    errors[name] && (
+      <small className="adv-error" id={`adv-${name}-err`}>
+        {errors[name]}
+      </small>
+    );
 
   const next = () => {
     const e = validate(step, form);
@@ -125,6 +162,7 @@ export default function AdvisorForm() {
   const reset = () => {
     setForm(EMPTY);
     setErrors({});
+    setSubmitError("");
     setStep(1);
     setDone(false);
   };
@@ -154,28 +192,29 @@ export default function AdvisorForm() {
       {/* Right: form card */}
       <section className="adv-card">
         {done ? (
-          <div className="adv-done">
+          <div className="adv-done" role="status">
             <div className="adv-tick" aria-hidden="true">✓</div>
-            <h2>Thank you. We have your request.</h2>
+            <h2 ref={doneRef} tabIndex={-1}>Thank you. We have your request.</h2>
             <p>
               An advisor will contact you on the phone number or email you gave
               with a shortlist of homes.
             </p>
             <div className="adv-actions">
-              <Link to="/" className="btn btn-primary">Back to home</Link>
-              <button type="button" className="btn btn-outline" onClick={reset}>
+              <Link to="/" className="adv-btn adv-btn--primary">Back to home</Link>
+              <button type="button" className="adv-btn adv-btn--ghost" onClick={reset}>
                 Send another request
               </button>
             </div>
           </div>
         ) : (
           <form onSubmit={submit} noValidate>
-            <p className="adv-eyebrow dark">Tell us what matters</p>
+            <p className="adv-eyebrow adv-eyebrow--dark">Tell us what matters</p>
             <h2 className="adv-heading">Request a considered shortlist</h2>
 
             <div
               className="adv-progress"
               role="progressbar"
+              aria-label={`Step ${step} of 3`}
               aria-valuemin={1}
               aria-valuemax={3}
               aria-valuenow={step}
@@ -184,7 +223,9 @@ export default function AdvisorForm() {
             </div>
             <p className="adv-step">Step {step} of 3</p>
 
-            <h3 className="adv-title">{STEPS[step - 1].title}</h3>
+            <h3 className="adv-title" ref={titleRef} tabIndex={-1}>
+              {STEPS[step - 1].title}
+            </h3>
             <p className="adv-help">{STEPS[step - 1].help}</p>
 
             {/* STEP 1 */}
@@ -194,15 +235,17 @@ export default function AdvisorForm() {
                   <label htmlFor="state">State or union territory</label>
                   <select
                     id="state"
+                    required
                     value={form.state}
                     onChange={(e) => set("state", e.target.value)}
+                    {...aria("state")}
                   >
                     <option value="">Choose a state or region</option>
                     {STATES.map((s) => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
-                  {errors.state && <small className="adv-error">{errors.state}</small>}
+                  {fieldError("state")}
                 </div>
 
                 <div className="adv-field">
@@ -210,13 +253,14 @@ export default function AdvisorForm() {
                   <input
                     id="cityOrArea"
                     type="text"
+                    required
+                    autoComplete="address-level2"
                     placeholder="e.g. Gurgaon or Pune"
                     value={form.cityOrArea}
                     onChange={(e) => set("cityOrArea", e.target.value)}
+                    {...aria("cityOrArea")}
                   />
-                  {errors.cityOrArea && (
-                    <small className="adv-error">{errors.cityOrArea}</small>
-                  )}
+                  {fieldError("cityOrArea")}
                 </div>
               </div>
             )}
@@ -224,13 +268,13 @@ export default function AdvisorForm() {
             {/* STEP 2 */}
             {step === 2 && (
               <>
-                <fieldset className="adv-field">
+                <fieldset className="adv-field" {...ariaGroup("lookingFor")}>
                   <legend>Who is the home for?</legend>
                   <div className="adv-choices">
                     {LOOKING_FOR.map((o) => (
                       <label
                         key={o.value}
-                        className={`adv-choice ${form.lookingFor === o.value ? "on" : ""}`}
+                        className={`adv-choice ${form.lookingFor === o.value ? "is-on" : ""}`}
                       >
                         <input
                           type="radio"
@@ -243,36 +287,36 @@ export default function AdvisorForm() {
                       </label>
                     ))}
                   </div>
-                  {errors.lookingFor && (
-                    <small className="adv-error">{errors.lookingFor}</small>
-                  )}
+                  {fieldError("lookingFor")}
                 </fieldset>
 
                 <div className="adv-field">
                   <label htmlFor="supportNeeded">Support needed</label>
                   <select
                     id="supportNeeded"
+                    required
                     value={form.supportNeeded}
                     onChange={(e) => set("supportNeeded", e.target.value)}
+                    {...aria("supportNeeded")}
                   >
                     <option value="">Choose the type of care</option>
                     {careTypes.map((c) => (
                       <option key={c._id} value={c._id}>{c.name}</option>
                     ))}
                   </select>
-                  {careError && <small className="adv-error">{careError}</small>}
-                  {errors.supportNeeded && (
-                    <small className="adv-error">{errors.supportNeeded}</small>
+                  {careError && (
+                    <small className="adv-error" role="alert">{careError}</small>
                   )}
+                  {fieldError("supportNeeded")}
                 </div>
 
-                <fieldset className="adv-field">
+                <fieldset className="adv-field" {...ariaGroup("monthlyBudget")}>
                   <legend>Monthly budget</legend>
                   <div className="adv-choices">
                     {MONTHLY_BUDGET.map((o) => (
                       <label
                         key={o.value}
-                        className={`adv-choice ${form.monthlyBudget === o.value ? "on" : ""}`}
+                        className={`adv-choice ${form.monthlyBudget === o.value ? "is-on" : ""}`}
                       >
                         <input
                           type="radio"
@@ -285,9 +329,7 @@ export default function AdvisorForm() {
                       </label>
                     ))}
                   </div>
-                  {errors.monthlyBudget && (
-                    <small className="adv-error">{errors.monthlyBudget}</small>
-                  )}
+                  {fieldError("monthlyBudget")}
                 </fieldset>
               </>
             )}
@@ -300,29 +342,33 @@ export default function AdvisorForm() {
                   <input
                     id="name"
                     type="text"
+                    required
                     autoComplete="name"
                     value={form.name}
                     onChange={(e) => set("name", e.target.value)}
+                    {...aria("name")}
                   />
-                  {errors.name && <small className="adv-error">{errors.name}</small>}
+                  {fieldError("name")}
                 </div>
 
                 <div className="adv-grid">
                   <div className="adv-field">
                     <label htmlFor="phone">Phone number</label>
                     <div className="adv-phone">
-                      <span>+91</span>
+                      <span aria-hidden="true">+91</span>
                       <input
                         id="phone"
                         type="tel"
+                        required
                         inputMode="numeric"
                         autoComplete="tel-national"
                         placeholder="98765 43210"
                         value={form.phone}
                         onChange={(e) => set("phone", e.target.value)}
+                        {...aria("phone")}
                       />
                     </div>
-                    {errors.phone && <small className="adv-error">{errors.phone}</small>}
+                    {fieldError("phone")}
                   </div>
 
                   <div className="adv-field">
@@ -330,44 +376,48 @@ export default function AdvisorForm() {
                     <input
                       id="email"
                       type="email"
+                      required
                       autoComplete="email"
                       value={form.email}
                       onChange={(e) => set("email", e.target.value)}
+                      {...aria("email")}
                     />
-                    {errors.email && <small className="adv-error">{errors.email}</small>}
+                    {fieldError("email")}
                   </div>
                 </div>
 
                 <label className="adv-consent">
                   <input
                     type="checkbox"
+                    required
                     checked={form.consent}
                     onChange={(e) => set("consent", e.target.checked)}
+                    {...aria("consent")}
                   />
                   <span>
                     I agree to be contacted about my request and I accept the
                     privacy policy.
                   </span>
                 </label>
-                {errors.consent && <small className="adv-error">{errors.consent}</small>}
+                {fieldError("consent")}
 
-                {submitError && <p className="adv-banner">{submitError}</p>}
+                {submitError && <p className="adv-banner" role="alert">{submitError}</p>}
               </>
             )}
 
             <div className="adv-actions">
               {step > 1 && (
-                <button type="button" className="btn btn-outline" onClick={back}>
+                <button type="button" className="adv-btn adv-btn--ghost" onClick={back}>
                   Back
                 </button>
               )}
               {step < 3 ? (
-                <button type="button" className="btn btn-primary" onClick={next}>
+                <button type="button" className="adv-btn adv-btn--primary" onClick={next}>
                   Continue →
                 </button>
               ) : (
-                <button type="submit" className="btn btn-primary" disabled={submitting}>
-                  {submitting ? "Sending..." : "Request my shortlist"}
+                <button type="submit" className="adv-btn adv-btn--primary" disabled={submitting}>
+                  {submitting ? "Sending…" : "Request my shortlist"}
                 </button>
               )}
             </div>

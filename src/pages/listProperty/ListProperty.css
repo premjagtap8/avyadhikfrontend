@@ -1,23 +1,44 @@
-/* AvyaDhik "For providers" page. Same navy + teal as Browse. */
+/* AvyaDhik "For providers" page.
+   Same tokens, font and shapes as Navbar.css / Footer.css / Browse.css:
+   navy + teal, Inter, pill buttons. */
 
 .lp {
-  --navy: #0b3a6e;
-  --navy-dark: #072a52;
-  --teal: #0f9b8e;
-  --teal-soft: #e3f4f2;
-  --ink: #1b2b3f;
-  --muted: #5d6b7c;
-  --line: #dbe3ec;
-  --bg: #f3f6fa;
-  --danger: #b3261e;
+  /* Palette: identical to Navbar.css */
+  --navy: #0a3a73;
+  --navy-dark: #072a54;
+  --teal: #00a38c;
+  --teal-dark: #008572;
+  --teal-soft: #e0f5f1;
+  --ink: #1c2b3f;
+  --muted: #5d6b7e;
+  --line: #e3e9f1;
+  --soft: #f1f6fb;
+  --danger: #b42318;
 
-  background: var(--bg);
+  --radius: 20px;
+  --shadow: 0 2px 6px rgba(10, 58, 115, 0.04), 0 10px 28px rgba(10, 58, 115, 0.07);
+
+  /* FIX: the page set no font-family, so it fell back to the browser serif.
+     Navbar and Footer use Inter / system sans. */
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--soft);
   color: var(--ink);
+  -webkit-font-smoothing: antialiased;
 }
 .lp *,
 .lp *::before,
 .lp *::after {
   box-sizing: border-box;
+}
+
+.lp a:focus-visible,
+.lp button:focus-visible,
+.lp summary:focus-visible,
+.lp input:focus-visible,
+.lp select:focus-visible,
+.lp textarea:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
 }
 
 .lp-container {
@@ -29,38 +50,46 @@
   margin-inline: auto;
 }
 
+/* Eyebrow: a small teal pill, same as the Browse page */
 .lp-eyebrow {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--teal);
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--teal-soft);
+  color: var(--teal-dark);
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 .lp-eyebrow--light {
-  color: #7fe0d6;
+  background: rgba(255, 255, 255, 0.14);
+  color: #bdf2ea;
 }
 
 /* ---------- Split section ---------- */
 .lp-split {
   display: grid;
-  grid-template-columns: 2fr 3fr;
-  min-height: 680px;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  /* fills the screen below the sticky navbar instead of a fixed 680px */
+  min-height: clamp(560px, calc(100dvh - var(--nav-h, 96px)), 800px);
 }
 
 .lp-aside {
   position: relative;
+  isolation: isolate;
   display: flex;
   align-items: flex-end;
   min-height: 420px;
   padding: 48px;
-  color: #fff;
   overflow: hidden;
+  color: #fff;
+  /* same navy as the /advisor panel, so a failed image still looks designed */
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-dark) 100%);
 }
 .lp-aside img {
   position: absolute;
   inset: 0;
+  z-index: -2;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -69,22 +98,29 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(7, 42, 82, 0.1) 0%, rgba(7, 42, 82, 0.9) 100%);
+  z-index: -1;
+  /* navy wash, with a faint teal glow bottom-left like the footer */
+  background:
+    radial-gradient(ellipse 70% 50% at 0% 100%, rgba(0, 163, 140, 0.35), transparent 70%),
+    linear-gradient(180deg, rgba(7, 42, 84, 0.25) 0%, rgba(7, 42, 84, 0.92) 100%);
 }
 .lp-aside > div {
-  position: relative;
-  z-index: 1;
   max-width: 520px;
 }
 .lp-aside h1 {
   margin: 0 0 16px;
-  font-size: clamp(2rem, 3.6vw, 3.2rem);
-  line-height: 1.1;
+  font-size: clamp(2rem, 3.6vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 .lp-aside p {
   margin: 0;
+  max-width: 46ch;
   font-size: 1.02rem;
   line-height: 1.65;
+  text-wrap: pretty;
   color: rgba(255, 255, 255, 0.88);
 }
 
@@ -93,22 +129,28 @@
   align-items: center;
   justify-content: center;
   padding: 48px 24px;
+  /* soft teal glow, same as the footer / browse hero */
+  background: radial-gradient(ellipse 60% 50% at 100% 0%, rgba(0, 163, 140, 0.08), transparent 70%), var(--soft);
 }
 .lp-card {
   width: 100%;
-  max-width: 700px;
+  max-width: 720px;
   padding: 44px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
   background: #fff;
-  border-radius: 28px;
-  box-shadow: 0 8px 40px rgba(11, 58, 110, 0.1);
+  box-shadow: var(--shadow);
 }
 .lp-card h2 {
   margin: 0 0 12px;
-  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  font-weight: 700;
   line-height: 1.15;
+  letter-spacing: -0.02em;
   color: var(--navy);
 }
 .lp-lead {
+  max-width: 60ch;
   margin: 0;
   line-height: 1.65;
   color: var(--muted);
@@ -116,48 +158,48 @@
 
 /* ---------- Form ---------- */
 .lp-progress {
-  height: 6px;
-  margin: 26px 0 12px;
-  background: #e3eaf2;
-  border-radius: 999px;
+  height: 5px;
+  margin: 28px 0 12px;
   overflow: hidden;
+  border-radius: 999px;
+  background: var(--line);
 }
 .lp-progress span {
   display: block;
   height: 100%;
+  border-radius: inherit;
   background: var(--teal);
-  border-radius: 999px;
   transition: width 0.3s ease;
 }
 .lp-step-label {
   margin: 0 0 22px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
 }
 
 .lp-step {
-  border: 0;
+  min-width: 0;
   margin: 0;
   padding: 0;
-  min-width: 0;
+  border: 0;
 }
 .lp-step legend {
-  padding: 0;
   margin-bottom: 8px;
-  font-size: 1.5rem;
-  font-weight: 600;
+  padding: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--navy);
 }
 .lp-step legend:focus {
-  outline: none;
+  outline: none; /* focus is moved here for screen readers only */
 }
 .lp-step > p {
+  max-width: 60ch;
   margin: 0 0 24px;
-  color: var(--muted);
   line-height: 1.6;
+  color: var(--muted);
 }
 
 .lp-grid {
@@ -171,35 +213,94 @@
 .lp-field label {
   display: block;
   margin-bottom: 8px;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--navy);
 }
 .lp-field input,
 .lp-field select,
 .lp-field textarea {
   width: 100%;
-  padding: 16px 18px;
-  font: inherit;
-  font-size: 0.95rem;
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background-color: #fff;
   color: var(--ink);
-  background: #fff;
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
+  font: inherit;
+  font-size: 0.97rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.lp-field input::placeholder,
+.lp-field textarea::placeholder {
+  color: #8a97a8;
+}
+.lp-field input:hover,
+.lp-field select:hover,
+.lp-field textarea:hover {
+  border-color: #c8d3e0;
 }
 .lp-field textarea {
-  resize: vertical;
   min-height: 130px;
+  resize: vertical;
 }
 .lp-field input:focus,
 .lp-field select:focus,
 .lp-field textarea:focus {
   outline: none;
   border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(15, 155, 142, 0.18);
+  box-shadow: 0 0 0 3px rgba(0, 163, 140, 0.18);
 }
 .lp-field [aria-invalid="true"] {
   border-color: var(--danger);
+}
+.lp-field [aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.15);
+}
+
+/* Phone field: a fixed "+91" box + the number input, same as the /advisor form.
+   The border, radius and focus ring live on the wrapper so they surround both parts. */
+.lp-phone {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.lp-phone:hover {
+  border-color: #c8d3e0;
+}
+.lp-phone:focus-within {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 163, 140, 0.18);
+}
+.lp-phone:has(input[aria-invalid="true"]) {
+  border-color: var(--danger);
+}
+.lp-phone:has(input[aria-invalid="true"]):focus-within {
+  box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.15);
+}
+.lp-phone span {
+  display: grid;
+  place-items: center;
+  padding: 0 14px;
+  border-right: 1px solid var(--line);
+  background: var(--soft);
+  font-weight: 600;
+  color: var(--muted);
+}
+/* the input drops its own border so it does not draw a box inside the box */
+.lp-field .lp-phone input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.lp-field .lp-phone input:focus,
+.lp-field .lp-phone input[aria-invalid="true"]:focus {
+  box-shadow: none;
 }
 
 .lp-error {
@@ -221,6 +322,7 @@
   align-items: flex-start;
   gap: 12px;
   margin-top: 22px;
+  font-size: 0.92rem;
   line-height: 1.55;
   cursor: pointer;
 }
@@ -228,7 +330,7 @@
   flex: none;
   width: 18px;
   height: 18px;
-  margin-top: 3px;
+  margin-top: 2px;
   accent-color: var(--teal);
 }
 
@@ -251,30 +353,38 @@
   justify-content: flex-start;
 }
 
+/* Buttons: same pills as the navbar (.btn-primary / .btn-outline) */
 .lp-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  padding: 16px 30px;
-  font: inherit;
-  font-weight: 600;
-  font-size: 0.98rem;
-  text-decoration: none;
+  padding: 12px 26px;
   border-radius: 999px;
+  font: inherit;
+  font-size: 0.97rem;
+  font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 .lp-btn--solid {
+  border: 1px solid var(--navy);
   background: var(--navy);
   color: #fff;
-  border: 1.5px solid var(--navy);
 }
 .lp-btn--solid:hover:not(:disabled) {
-  background: var(--navy-dark);
+  border-color: var(--teal);
+  background: var(--teal);
 }
 .lp-btn--ghost {
-  background: #fff;
+  border: 1px solid var(--navy);
+  background: transparent;
   color: var(--navy);
-  border: 1.5px solid var(--navy);
+}
+.lp-btn--ghost:hover:not(:disabled) {
+  background: var(--navy);
+  color: #fff;
 }
 .lp-btn:disabled {
   opacity: 0.6;
@@ -284,18 +394,21 @@
 .lp-done {
   margin-top: 28px;
   padding: 32px 24px;
-  text-align: center;
-  background: var(--teal-soft);
+  border: 1px solid rgba(0, 163, 140, 0.25);
   border-radius: 18px;
+  background: var(--teal-soft);
+  text-align: center;
 }
 .lp-done h3 {
   margin: 0 0 10px;
+  font-size: 1.25rem;
   color: var(--navy);
 }
 .lp-done p {
-  margin: 0 0 22px;
-  color: var(--muted);
+  max-width: 48ch;
+  margin: 0 auto 22px;
   line-height: 1.6;
+  color: var(--muted);
 }
 
 /* ---------- Process cards ---------- */
@@ -303,7 +416,8 @@
   padding: 72px 0;
 }
 .lp-section--soft {
-  background: #e9f1f1;
+  /* same light teal-grey as the city grid on the Browse page */
+  background: linear-gradient(180deg, #e6f1f2 0%, #eaf3f4 100%);
 }
 
 .lp-care-grid {
@@ -314,21 +428,35 @@
 .lp-care-card {
   position: relative;
   padding: 28px 26px 32px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(11, 58, 110, 0.07);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
+.lp-care-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0, 163, 140, 0.35);
+  box-shadow: 0 4px 10px rgba(10, 58, 115, 0.06), 0 18px 40px rgba(10, 58, 115, 0.12);
+}
+/* The numbers are a real sequence (1 -> 2 -> 3), so they stay */
 .lp-care-number {
-  display: block;
-  margin-bottom: 14px;
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: var(--teal-soft);
+  color: var(--teal-dark);
   font-size: 0.85rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--teal);
 }
 .lp-care-card h3 {
   margin: 0 0 10px;
   font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--navy);
 }
 .lp-care-card p {
@@ -338,15 +466,18 @@
 }
 .lp-care-card svg {
   position: absolute;
-  top: 26px;
+  top: 28px;
   right: 24px;
   color: var(--navy);
+  opacity: 0.85;
 }
 
 /* ---------- FAQ ---------- */
 .lp-faq-title {
   margin: 0 0 28px;
   font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--navy);
 }
 .lp-faq {
@@ -354,18 +485,44 @@
   gap: 12px;
 }
 .lp-faq-item {
-  background: #fff;
-  border-radius: 16px;
   padding: 0 22px;
-  box-shadow: 0 2px 14px rgba(11, 58, 110, 0.06);
+  border: 1px solid transparent;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 14px rgba(10, 58, 115, 0.06);
+  transition: border-color 0.2s ease;
+}
+.lp-faq-item[open] {
+  border-color: rgba(0, 163, 140, 0.35);
 }
 .lp-faq-item summary {
-  padding: 20px 0;
+  position: relative;
+  padding: 20px 32px 20px 0;
   font-weight: 600;
   color: var(--navy);
+  list-style: none;
   cursor: pointer;
 }
+.lp-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+/* plus / minus indicator */
+.lp-faq-item summary::after {
+  content: "+";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--teal-dark);
+}
+.lp-faq-item[open] summary::after {
+  content: "\2212";
+}
 .lp-faq-item p {
+  max-width: 62ch;
   margin: 0;
   padding-bottom: 20px;
   line-height: 1.65;
@@ -373,27 +530,83 @@
 }
 
 /* ---------- Responsive ---------- */
+
+/* Small laptop / large tablet */
+@media (max-width: 1100px) {
+  .lp-split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+  .lp-aside {
+    padding: 36px 28px;
+  }
+  .lp-card {
+    padding: 36px 30px;
+  }
+}
+
+/* Tablet: image panel stacks above the form */
 @media (max-width: 900px) {
   .lp-split {
     grid-template-columns: 1fr;
+    min-height: 0;
   }
   .lp-aside {
-    min-height: 340px;
+    min-height: 320px;
     padding: 32px 24px;
+  }
+  .lp-main {
+    padding: 32px 16px 48px;
+  }
+  .lp-section {
+    padding: 56px 0;
   }
   .lp-care-grid {
     grid-template-columns: 1fr;
   }
 }
+
+/* Mobile */
 @media (max-width: 560px) {
+  .lp-container,
+  .lp-narrow {
+    width: calc(100% - 28px);
+  }
+  .lp-aside {
+    min-height: 280px;
+    padding: 28px 18px;
+  }
   .lp-card {
-    padding: 28px 20px;
-    border-radius: 22px;
+    padding: 26px 18px;
+    border-radius: 20px;
   }
   .lp-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
-  .lp-btn {
-    padding: 14px 22px;
+  .lp-step legend {
+    font-size: 1.25rem;
+  }
+  .lp-actions {
+    flex-wrap: wrap;
+  }
+  .lp-actions .lp-btn {
+    flex: 1;
+  }
+  .lp-section {
+    padding: 44px 0;
+  }
+  .lp-faq-item {
+    padding: 0 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp *,
+  .lp *::before,
+  .lp *::after {
+    transition: none !important;
+  }
+  .lp-care-card:hover {
+    transform: none;
   }
 }

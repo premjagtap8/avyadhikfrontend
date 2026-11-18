@@ -37,6 +37,19 @@ export default function Login() {
     setSubmitError("");
   };
 
+  // Marks a control invalid and links it to its error message
+  const aria = (name) => ({
+    "aria-invalid": errors[name] ? "true" : undefined,
+    "aria-describedby": errors[name] ? `lg-${name}-err` : undefined,
+  });
+
+  const fieldError = (name) =>
+    errors[name] && (
+      <small className="lg-error" id={`lg-${name}-err`}>
+        {errors[name]}
+      </small>
+    );
+
   const submit = async (ev) => {
     ev.preventDefault();
 
@@ -76,10 +89,11 @@ export default function Login() {
       {/* Left: short pitch */}
       <section className="lg-pitch">
         <div className="lg-pitch__inner">
-          <h1>Welcome back to AvyaDhik</h1>
+          <p className="lg-eyebrow">Welcome back</p>
+          <h1>Sign in to AvyaDhik</h1>
           <p>
-            Sign in to manage listings, review provider requests and keep your
-            residence profiles up to date.
+            Manage listings, review provider requests and keep your residence
+            profiles up to date.
           </p>
           <ul>
             <li>Review and approve provider requests</li>
@@ -92,6 +106,7 @@ export default function Login() {
       {/* Right: form */}
       <section className="lg-panel">
         <form className="lg-card" onSubmit={submit} noValidate>
+          <p className="lg-eyebrow lg-eyebrow--dark">Your account</p>
           <h2>Sign in</h2>
           <p className="lg-sub">Use the email and password for your account.</p>
 
@@ -106,13 +121,14 @@ export default function Login() {
             <input
               id="email"
               type="email"
+              required
               autoComplete="email"
               placeholder="you@example.com"
               value={form.email}
               onChange={(e) => set("email", e.target.value)}
-              aria-invalid={Boolean(errors.email)}
+              {...aria("email")}
             />
-            {errors.email && <small className="lg-error">{errors.email}</small>}
+            {fieldError("email")}
           </div>
 
           <div className="lg-field">
@@ -121,22 +137,24 @@ export default function Login() {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                required
                 autoComplete="current-password"
                 placeholder="Enter your password"
                 value={form.password}
                 onChange={(e) => set("password", e.target.value)}
-                aria-invalid={Boolean(errors.password)}
+                {...aria("password")}
               />
               <button
                 type="button"
                 className="lg-toggle"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-pressed={showPassword}
+                aria-label="Show password"
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
-            {errors.password && <small className="lg-error">{errors.password}</small>}
+            {fieldError("password")}
           </div>
 
           <button type="submit" className="lg-submit" disabled={submitting}>

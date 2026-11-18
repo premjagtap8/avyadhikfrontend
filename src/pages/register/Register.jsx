@@ -64,6 +64,19 @@ export default function Register() {
     setSubmitError("");
   };
 
+  // Marks a control invalid and links it to its error message
+  const aria = (name) => ({
+    "aria-invalid": errors[name] ? "true" : undefined,
+    "aria-describedby": errors[name] ? `rg-${name}-err` : undefined,
+  });
+
+  const fieldError = (name) =>
+    errors[name] && (
+      <small className="rg-error" id={`rg-${name}-err`}>
+        {errors[name]}
+      </small>
+    );
+
   const submit = async (ev) => {
     ev.preventDefault();
 
@@ -105,6 +118,7 @@ export default function Register() {
       {/* Left: short pitch */}
       <section className="rg-pitch">
         <div className="rg-pitch__inner">
+          <p className="rg-eyebrow">Free to join</p>
           <h1>Create your AvyaDhik account</h1>
           <p>
             Whether you are searching for care for someone you love or running a
@@ -121,6 +135,7 @@ export default function Register() {
       {/* Right: form */}
       <section className="rg-panel">
         <form className="rg-card" onSubmit={submit} noValidate>
+          <p className="rg-eyebrow rg-eyebrow--dark">New account</p>
           <h2>Register</h2>
           <p className="rg-sub">It takes less than a minute.</p>
 
@@ -157,12 +172,13 @@ export default function Register() {
             <input
               id="name"
               type="text"
+              required
               autoComplete="name"
               value={form.name}
               onChange={(e) => set("name", e.target.value)}
-              aria-invalid={Boolean(errors.name)}
+              {...aria("name")}
             />
-            {errors.name && <small className="rg-error">{errors.name}</small>}
+            {fieldError("name")}
           </div>
 
           <div className="rg-grid">
@@ -171,31 +187,33 @@ export default function Register() {
               <input
                 id="email"
                 type="email"
+                required
                 autoComplete="email"
                 placeholder="you@example.com"
                 value={form.email}
                 onChange={(e) => set("email", e.target.value)}
-                aria-invalid={Boolean(errors.email)}
+                {...aria("email")}
               />
-              {errors.email && <small className="rg-error">{errors.email}</small>}
+              {fieldError("email")}
             </div>
 
             <div className="rg-field">
               <label htmlFor="phone">Phone number</label>
               <div className="rg-phone">
-                <span>+91</span>
+                <span aria-hidden="true">+91</span>
                 <input
                   id="phone"
                   type="tel"
+                  required
                   inputMode="numeric"
                   autoComplete="tel-national"
                   placeholder="98765 43210"
                   value={form.phone}
                   onChange={(e) => set("phone", e.target.value)}
-                  aria-invalid={Boolean(errors.phone)}
+                  {...aria("phone")}
                 />
               </div>
-              {errors.phone && <small className="rg-error">{errors.phone}</small>}
+              {fieldError("phone")}
             </div>
           </div>
 
@@ -206,22 +224,24 @@ export default function Register() {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  required
                   autoComplete="new-password"
                   placeholder="At least 8 characters"
                   value={form.password}
                   onChange={(e) => set("password", e.target.value)}
-                  aria-invalid={Boolean(errors.password)}
+                  {...aria("password")}
                 />
                 <button
                   type="button"
                   className="rg-toggle"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-pressed={showPassword}
+                  aria-label="Show passwords"
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
-              {errors.password && <small className="rg-error">{errors.password}</small>}
+              {fieldError("password")}
             </div>
 
             <div className="rg-field">
@@ -229,14 +249,13 @@ export default function Register() {
               <input
                 id="confirmPassword"
                 type={showPassword ? "text" : "password"}
+                required
                 autoComplete="new-password"
                 value={form.confirmPassword}
                 onChange={(e) => set("confirmPassword", e.target.value)}
-                aria-invalid={Boolean(errors.confirmPassword)}
+                {...aria("confirmPassword")}
               />
-              {errors.confirmPassword && (
-                <small className="rg-error">{errors.confirmPassword}</small>
-              )}
+              {fieldError("confirmPassword")}
             </div>
           </div>
 

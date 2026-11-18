@@ -60,10 +60,13 @@ export default function ListProperty() {
     <main className="lp">
       <div className="lp-split">
         <aside className="lp-aside">
+          {/* Above the fold, so it loads eagerly (lazy-loading here delays the first paint).
+              If the image fails to load, the navy background in the CSS still looks intentional. */}
           <img
             src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=86"
             alt="Premium senior living residence"
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
             decoding="async"
           />
           <div>
@@ -89,7 +92,7 @@ export default function ListProperty() {
         </section>
       </div>
 
-      <section className="lp-section">
+      <section className="lp-section" aria-label="How review works">
         <div className="lp-container">
           <div className="lp-care-grid">
             {PROCESS.map((p) => (
@@ -97,7 +100,7 @@ export default function ListProperty() {
                 <span className="lp-care-number">{p.n}</span>
                 <h3>{p.title}</h3>
                 <p>{p.text}</p>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   {p.icon}
                 </svg>
               </div>

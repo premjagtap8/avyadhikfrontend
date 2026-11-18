@@ -31,6 +31,13 @@ const CARE_TYPES = [
   { name: "Rehabilitation", slug: "rehabilitation", detail: "Goal-led physiotherapy and supported recovery." },
 ];
 
+// The four words printed under the logo. Shown as real text so they stay
+// sharp; the tiny baked-in version inside the image is cropped away in CSS.
+const TAGLINE = ["Care", "Equipment", "Technology", "Wellbeing"];
+
+// Must match the breakpoint in Navbar.css where the burger menu appears
+const DESKTOP_QUERY = "(min-width: 1241px)";
+
 const ChevronIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -78,6 +85,17 @@ export default function Navbar({ user = null, onLogout = () => {} }) {
     };
   }, []);
 
+  // If the window is resized up to desktop, close the mobile menu
+  // so it does not stay open behind the desktop layout
+  useEffect(() => {
+    const mq = window.matchMedia(DESKTOP_QUERY);
+    const onChange = (e) => {
+      if (e.matches) setMobileOpen(false);
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   const toggle = (name) => setOpenMenu((cur) => (cur === name ? null : name));
 
   const dashboardPath =
@@ -89,8 +107,19 @@ export default function Navbar({ user = null, onLogout = () => {} }) {
   return (
     <header className="nav" ref={navRef}>
       <div className="nav-row">
-        <Link to="/" className="nav-logo" aria-label="AvyaDhik home">
-          <img src={logo} alt="AvyaDhik: Care, Equipment, Technology, Wellbeing" />
+        <Link
+          to="/"
+          className="nav-logo"
+          aria-label="AvyaDhik: Care, Equipment, Technology, Wellbeing. Go to home page"
+        >
+          <span className="nav-logo-mark">
+            <img src={logo} alt="" decoding="async" />
+          </span>
+          <span className="nav-tagline" aria-hidden="true">
+            {TAGLINE.map((word) => (
+              <span key={word}>{word}</span>
+            ))}
+          </span>
         </Link>
 
         {/* Desktop menu */}
@@ -102,6 +131,7 @@ export default function Navbar({ user = null, onLogout = () => {} }) {
               type="button"
               className={`nav-link nav-toggle ${openMenu === "locations" ? "is-open" : ""}`}
               aria-expanded={openMenu === "locations"}
+              aria-haspopup="true"
               onClick={() => toggle("locations")}
             >
               Locations <ChevronIcon />
@@ -123,6 +153,7 @@ export default function Navbar({ user = null, onLogout = () => {} }) {
               type="button"
               className={`nav-link nav-toggle ${openMenu === "care" ? "is-open" : ""}`}
               aria-expanded={openMenu === "care"}
+              aria-haspopup="true"
               onClick={() => toggle("care")}
             >
               Care types <ChevronIcon />
@@ -159,14 +190,17 @@ export default function Navbar({ user = null, onLogout = () => {} }) {
           )}
 
           <Link to="/advisor" className="btn btn-primary">
-            <PhoneIcon /> Speak to an advisor
+            <PhoneIcon />
+            <span className="nav-cta-long">Speak to an advisor</span>
+            <span className="nav-cta-short">Advisor</span>
           </Link>
 
           <button
             type="button"
             className="nav-burger"
-            aria-label="Open menu"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
+            aria-controls="nav-mobile-menu"
             onClick={() => setMobileOpen((v) => !v)}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -190,7 +224,7 @@ export default function Navbar({ user = null, onLogout = () => {} }) {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <nav className="nav-mobile" aria-label="Mobile navigation">
+        <nav id="nav-mobile-menu" className="nav-mobile" aria-label="Mobile navigation">
           <div className="nav-mobile-group">
             <span>Explore</span>
             <Link to="/browse">Find a residence</Link>

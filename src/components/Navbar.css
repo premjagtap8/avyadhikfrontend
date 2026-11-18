@@ -8,13 +8,27 @@
   --line: #e3e9f1;
   --soft: #f1f6fb;
   --white: #ffffff;
+
+  /* Bar height and logo image height. Change sizes here only. */
+  --nav-h: 96px;
+  --logo-h: 100px;
+
+  /* How much of the logo IMAGE is hidden, as a fraction of its height.
+     The tiny baked-in tagline sits at the bottom of the image, so the
+     bottom part is cut away and the tagline is drawn as real text instead.
+     If a sliver of the old tagline still shows, raise --logo-cut-bottom
+     (for example 0.17). If the wordmark gets cut, lower it. */
+  --logo-cut-top: 0.12;
+  --logo-cut-bottom: 0.16;
 }
 
 .nav {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.96);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  backdrop-filter: saturate(180%) blur(10px);
   border-bottom: 1px solid var(--line);
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
 }
@@ -22,27 +36,62 @@
 .nav-row {
   max-width: 1280px;
   margin: 0 auto;
-  height: 72px;
+  height: var(--nav-h);
   padding: 0 24px;
   display: flex;
   align-items: center;
   gap: 24px;
 }
 
-/* The logo file has white space around it, so it is made taller
-   than the bar and pulled back with negative margin. */
+/* LOGO
+   Problem: the tagline inside the image (Care | Equipment | Technology |
+   Wellbeing) is only about 4px tall at navbar size, so it can never be
+   read, and the .jpg also has a faint grey box around it.
+   Fix: show only the icon + AVYADHIK part of the image, remove the grey
+   box with mix-blend-mode, and render the four words as real text. */
 .nav-logo {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 3px;
   flex-shrink: 0;
-  height: 72px;
+  height: var(--nav-h);
+  text-decoration: none;
+  border-radius: 10px;
+}
+
+/* Window that shows only the middle part of the image */
+.nav-logo-mark {
+  display: block;
+  height: calc(var(--logo-h) * (1 - var(--logo-cut-top) - var(--logo-cut-bottom)));
   overflow: hidden;
 }
-.nav-logo img {
-  height: 92px;
-  width: auto;
-  margin: -10px 0;
+.nav-logo-mark img {
   display: block;
+  height: var(--logo-h);
+  width: auto;
+  /* slide the image up so the empty top part is hidden */
+  margin-top: calc(var(--logo-h) * var(--logo-cut-top) * -1);
+  mix-blend-mode: multiply; /* white .jpg background disappears into the bar */
+}
+
+/* Real-text tagline: sharp at any zoom or screen density */
+.nav-tagline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.nav-tagline span + span::before {
+  content: "\2022";
+  margin-right: 5px;
+  color: var(--teal);
 }
 
 .nav-links {
@@ -85,6 +134,13 @@
   transform: rotate(180deg);
 }
 
+/* Visible keyboard focus on everything clickable */
+.nav a:focus-visible,
+.nav button:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
 /* Dropdown panels */
 .nav-panel {
   position: absolute;
@@ -98,9 +154,10 @@
   box-shadow: 0 16px 40px rgba(10, 58, 115, 0.14);
   display: grid;
   gap: 2px;
+  animation: nav-pop 0.16s ease-out;
 }
 .nav-panel-wide {
-  width: 420px;
+  width: min(420px, 90vw);
   max-height: 70vh;
   overflow-y: auto;
 }
@@ -129,6 +186,17 @@
   color: var(--teal-dark);
 }
 
+@keyframes nav-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Right side */
 .nav-actions {
   margin-left: auto;
@@ -142,6 +210,7 @@
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
 }
 .nav-provider:hover {
   color: var(--teal-dark);
@@ -180,13 +249,18 @@
   color: var(--white);
 }
 
-/* Burger (mobile only) */
+/* Long label on desktop, short label on small screens */
+.nav-cta-short {
+  display: none;
+}
+
+/* Burger (tablet and mobile only) */
 .nav-burger {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--white);
@@ -196,7 +270,8 @@
 
 /* Mobile menu */
 .nav-mobile {
-  max-height: calc(100vh - 72px);
+  max-height: calc(100vh - var(--nav-h));
+  max-height: calc(100dvh - var(--nav-h));
   overflow-y: auto;
   padding: 8px 24px 24px;
   border-top: 1px solid var(--line);
@@ -220,7 +295,7 @@
 }
 .nav-mobile-group a,
 .nav-mobile-group button {
-  padding: 9px 0;
+  padding: 10px 0;
   border: 0;
   background: none;
   text-align: left;
@@ -235,8 +310,13 @@
   color: var(--teal-dark);
 }
 
-/* Responsive */
-@media (max-width: 1100px) {
+/* TABLET and below: menu collapses into the burger.
+   The logo block is wider now, so this happens a little earlier. */
+@media (max-width: 1240px) {
+  :root {
+    --nav-h: 88px;
+    --logo-h: 92px;
+  }
   .nav-links,
   .nav-provider,
   .nav-hide-sm {
@@ -246,16 +326,54 @@
     display: inline-flex;
   }
 }
-@media (max-width: 520px) {
+
+/* MOBILE */
+@media (max-width: 600px) {
+  :root {
+    --nav-h: 76px;
+    --logo-h: 80px;
+  }
   .nav-row {
     padding: 0 14px;
     gap: 10px;
   }
-  .nav-logo img {
-    height: 80px;
+  .nav-tagline {
+    font-size: 9.5px;
+    gap: 4px;
+  }
+  .nav-tagline span + span::before {
+    margin-right: 4px;
+  }
+  .nav-mobile {
+    padding: 8px 18px 24px;
   }
   .btn-primary {
-    padding: 9px 12px;
+    padding: 9px 14px;
     font-size: 13.5px;
+  }
+  .nav-cta-long {
+    display: none;
+  }
+  .nav-cta-short {
+    display: inline;
+  }
+}
+
+/* SMALL PHONES: the advisor link is already inside the menu,
+   so hide the header button to leave room for the logo and tagline. */
+@media (max-width: 460px) {
+  .nav-actions .btn-primary {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-panel {
+    animation: none;
+  }
+  .nav-toggle svg,
+  .nav-link,
+  .btn {
+    transition: none;
   }
 }

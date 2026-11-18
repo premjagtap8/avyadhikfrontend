@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import FilterPanel from "../../components/browse/FilterPanel";
 import PropertyCard from "../../components/browse/PropertyCard";
 import CityGrid from "../../components/browse/CityGrid";
+import ShortlistWidget from "../../components/browse/ShortlistWidget";
 import { fetchHomes } from "../../services/homeService";
 import { getDummyResponse } from "../../data/dummyHomes";
 import {
@@ -14,8 +15,9 @@ import "./Browse.css";
 
 const PAGE_SIZE = 12;
 
-// Demo fallback: only active when VITE_USE_DUMMY_DATA=true
-const USE_DUMMY = import.meta.env.VITE_USE_DUMMY_DATA === "true";
+// Static backup homes: ON by default so the Vercel (frontend-only) deploy shows
+// homes. Set VITE_USE_DUMMY_DATA=false to turn it off once the backend is live.
+const USE_DUMMY = import.meta.env.VITE_USE_DUMMY_DATA !== "false";
 
 const EMPTY_FILTERS = {
   city: "",
@@ -31,6 +33,12 @@ const hasActiveFilters = (f) =>
 
 const cityLabel = (value) =>
   LOCATION_OPTIONS.find((o) => o.value === value)?.label || value;
+
+// "post-operative-care" -> "Post operative care"
+const prettify = (v) => {
+  const s = String(v).replace(/[-_]+/g, " ").trim();
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
 
 // The API has no sort param yet, so this only reorders the current page.
 function sortHomes(list, sort) {
@@ -93,7 +101,7 @@ export default function Browse() {
 
     fetchHomes({ ...filters, page, limit: PAGE_SIZE }, controller.signal)
       .then((res) => {
-        // Backend worked but returned nothing (and no filters) → use demo data
+        // Backend worked but returned nothing (and no filters) → static backup
         if (USE_DUMMY && !res.data.homes.length && !hasActiveFilters(filters)) {
           res = getDummyResponse(filters, page, PAGE_SIZE);
         }
@@ -103,7 +111,7 @@ export default function Browse() {
       .catch((err) => {
         if (err.name === "AbortError") return;
         if (USE_DUMMY) {
-          // Backend failed → use demo data
+          // Backend failed → static backup
           const res = getDummyResponse(filters, page, PAGE_SIZE);
           setHomes(res.data.homes);
           setMeta({ total: res.total, pages: res.pages });
@@ -121,6 +129,20 @@ export default function Browse() {
 
   const results = useMemo(() => sortHomes(homes, sort), [homes, sort]);
 
+  // Removable chips for every active filter
+  const chips = [
+    filters.city && { id: "city", label: cityLabel(filters.city), next: { ...filters, city: "" } },
+    filters.care && { id: "care", label: prettify(filters.care), next: { ...filters, care: "" } },
+    filters.stay && { id: "stay", label: prettify(filters.stay), next: { ...filters, stay: "" } },
+    filters.room && { id: "room", label: prettify(filters.room), next: { ...filters, room: "" } },
+    filters.rating && { id: "rating", label: `${filters.rating}+ rating`, next: { ...filters, rating: "" } },
+    ...filters.facilities.map((f) => ({
+      id: `fac-${f}`,
+      label: prettify(f),
+      next: { ...filters, facilities: filters.facilities.filter((x) => x !== f) },
+    })),
+  ].filter(Boolean);
+
   return (
     <main className="browse">
       <header className="browse__hero">
@@ -128,7 +150,7 @@ export default function Browse() {
           <nav className="browse__crumbs" aria-label="Breadcrumb">
             <Link to="/">Home</Link>
             <span aria-hidden="true">›</span>
-            <span>Directory</span>
+            <span aria-current="page">Directory</span>
           </nav>
 
           <span className="browse__eyebrow">Explore senior care</span>
@@ -150,6 +172,8 @@ export default function Browse() {
               <button
                 key={c}
                 type="button"
+                className={filters.city === c ? "is-active" : ""}
+                aria-pressed={filters.city === c}
                 onClick={() => handleChange({ ...filters, city: c })}
               >
                 {cityLabel(c)}
@@ -173,6 +197,7 @@ export default function Browse() {
               <path d="M10 18h4" />
             </svg>
             Filters
+            {chips.length > 0 && <span className="browse__filter-count">{chips.length}</span>}
           </button>
           <FilterPanel
             filters={filters}
@@ -205,6 +230,28 @@ export default function Browse() {
               ))}
             </select>
           </div>
+
+          {chips.length > 0 && (
+            <div className="browse__chips" aria-label="Active filters">
+              {chips.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  className="browse__chip"
+                  onClick={() => handleChange(c.next)}
+                  aria-label={`Remove filter ${c.label}`}
+                >
+                  {c.label}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  </svg>
+                </button>
+              ))}
+              <button type="button" className="browse__chips-clear" onClick={handleReset}>
+                Clear all
+              </button>
+            </div>
+          )}
 
           {error ? (
             <div className="browse__error" role="alert">
@@ -259,7 +306,7 @@ export default function Browse() {
           ) : (
             <div className="browse__empty">
               <h3>No residences match these filters</h3>
-              <p>Try removing a filter, or let our advisor build a shortlist for you.</p>
+              <p>Remove a filter, or let our advisor build a shortlist for you.</p>
               <div className="browse__empty-actions">
                 <button type="button" className="btn btn--ghost" onClick={handleReset}>
                   Reset filters
@@ -272,6 +319,9 @@ export default function Browse() {
       </div>
 
       <CityGrid />
+
+      {/* Floating "Need help choosing care?" bar + six-step shortlist modal */}
+      <ShortlistWidget />
     </main>
   );
 }
